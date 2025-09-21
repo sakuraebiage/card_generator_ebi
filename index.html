@@ -5,8 +5,8 @@
 <title>歳神巡幸祭カードジェネレーター</title>
 <style>
   @font-face {
-    font-family: "AoyagiKozan";
-    src: url("fonts/AoyagiKozan.ttf") format("truetype");
+    font-family: "AoyagiKouzansFont";
+    src: url("fonts/青柳衡山フォントT.ttf") format("truetype");
   }
   @font-face {
     font-family: "YorutegakiLight";
@@ -39,12 +39,8 @@
     margin-top: 20px;
     width: 300px;
   }
-  label {
-    font-weight: bold;
-  }
-  input[type="text"], select, textarea {
-    width: 100%;
-  }
+  label { font-weight: bold; }
+  input[type="text"], select, textarea { width: 100%; }
 </style>
 </head>
 <body>
@@ -74,21 +70,21 @@
   <label>自己紹介（120文字以内）:</label>
   <textarea id="comment2" maxlength="120" rows="3"></textarea>
 
-  <label>フォントを選択:</label>
-  <select id="fontSelector">
-    <option value="serif">標準</option>
-    <option value="AoyagiKozan">青柳衡山フォントT</option>
-    <option value="YorutegakiLight">YorutegakiLight</option>
-    <option value="YorutegakiRegular">YorutegakiRegular</option>
-    <option value="AnHina02">AnHina02</option>
-  </select>
-
   <label>背景画像を選択:</label>
   <select id="bgSelector">
     <option value="none">--- 選択してください ---</option>
     <option value="緑.png">緑</option>
     <option value="青.png">青</option>
     <option value="橙.png">橙</option>
+  </select>
+
+  <label>フォントを選択:</label>
+  <select id="fontSelector">
+    <option value="serif">標準</option>
+    <option value="AoyagiKouzansFont">青柳衡山フォント</option>
+    <option value="YorutegakiLight">Yorutegaki Light</option>
+    <option value="YorutegakiRegular">Yorutegaki Regular</option>
+    <option value="AnHina02">AnHina02</option>
   </select>
 
   <label>イラスト画像をアップロード（バストアップ700*800）:</label>
@@ -108,14 +104,15 @@ template.src = "サンプル2.png";
 let charaImg = null;
 let bgImage = null;
 
-template.onload = () => loadFonts();
+template.onload = draw;
 
-document.querySelectorAll("#name, #cast, #comment1, #comment2, #fontSelector").forEach(input => {
+document.querySelectorAll("#name, #cast, #comment1, #comment2").forEach(input => {
   input.addEventListener("input", draw);
 });
 document.querySelectorAll("input[name='role']").forEach(cb => {
   cb.addEventListener("change", draw);
 });
+document.getElementById("fontSelector").addEventListener("change", draw);
 
 document.getElementById("imageUpload").addEventListener("change", function(e) {
   const reader = new FileReader();
@@ -130,7 +127,7 @@ document.getElementById("imageUpload").addEventListener("change", function(e) {
       offscreen.height = 480;
       const offCtx = offscreen.getContext("2d");
       offCtx.clearRect(0, 0, 390, 480);
-      offCtx.drawImage(img, (390 - w) / 2, (480 - h) / 2, w, h);
+      offCtx.drawImage(img, (390 - w)/2, (480 - h)/2, w, h);
       charaImg = new Image();
       charaImg.onload = draw;
       charaImg.src = offscreen.toDataURL();
@@ -142,47 +139,38 @@ document.getElementById("imageUpload").addEventListener("change", function(e) {
 
 document.getElementById("bgSelector").addEventListener("change", function () {
   const bgPath = this.value;
-  if (bgPath === "none") {
+  if(bgPath === "none") {
     bgImage = null;
     draw();
   } else {
     bgImage = new Image();
     bgImage.onload = draw;
-    bgImage.src = `images/${bgPath}`;
+    bgImage.src = bgPath; // ← images/ フォルダに入れていれば `images/${bgPath}` に変更
   }
 });
-
-function loadFonts() {
-  // 選択可能なフォントすべてロードしてから描画
-  Promise.all([
-    document.fonts.load("30px 'AoyagiKozan'"),
-    document.fonts.load("30px 'YorutegakiLight'"),
-    document.fonts.load("30px 'YorutegakiRegular'"),
-    document.fonts.load("30px 'AnHina02'")
-  ]).then(draw);
-}
 
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.drawImage(template, 0, 0, canvas.width, canvas.height);
-  if (bgImage) ctx.drawImage(bgImage, 143, 185, 385, 475);
-  if (charaImg) ctx.drawImage(charaImg, 140, 180, 390, 497);
+  if(bgImage) ctx.drawImage(bgImage, 143, 185, 385, 475);
+  if(charaImg) ctx.drawImage(charaImg, 140, 180, 390, 497);
 
   const selectedFont = document.getElementById("fontSelector").value;
-
+  
   // NAME
-  ctx.font = "bold 48px '" + selectedFont + "'";
+  ctx.font = `bold 48px ${selectedFont}`;
   ctx.fillStyle = "black";
   ctx.textAlign = "left";
   ctx.fillText(document.getElementById("name").value, 710, 250);
 
-  // CAST: 自動サイズ調整
-  const castText = document.getElementById("cast").value;
-  let fontSize = 48;
+  // CAST 自動調整
+  let castText = document.getElementById("cast").value;
+  let castSize = 48;
   do {
-    ctx.font = "bold " + fontSize + "px '" + selectedFont + "'";
-    fontSize--;
-  } while (ctx.measureText(castText).width > 650 && fontSize > 12);
+    ctx.font = `bold ${castSize}px ${selectedFont}`;
+    if(ctx.measureText(castText).width <= 650) break;
+    castSize--;
+  } while(castSize > 12);
   ctx.fillText(castText, 710, 390);
 
   // 役職
@@ -196,39 +184,41 @@ function draw() {
     "運営": { x: 950, y: 550, w: 72, h: 34 },
     "斎人": { x: 1125, y: 550, w: 72, h: 34 },
   };
-  const selectedRoles = Array.from(document.querySelectorAll("input[name='role']:checked")).map(cb => cb.value);
-  ctx.fillStyle = "rgba(255, 127, 127, 0.6)";
+  const selectedRoles = Array.from(document.querySelectorAll("input[name='role']:checked")).map(cb=>cb.value);
+  ctx.fillStyle = "rgba(255,127,127,0.6)";
   selectedRoles.forEach(role => {
     const mark = rolePositionMap[role];
-    if (mark) ctx.fillRect(mark.x, mark.y, mark.w, mark.h);
+    if(mark) ctx.fillRect(mark.x, mark.y, mark.w, mark.h);
   });
 
   // ひとこと
-  ctx.font = "bold 26px '" + selectedFont + "'";
+  ctx.font = `bold 26px ${selectedFont}`;
   ctx.fillStyle = "black";
   ctx.fillText("「" + document.getElementById("comment1").value + "」", 780, 660);
 
-  // 自己紹介（40字で自動改行）
-  ctx.font = "24px '" + selectedFont + "'";
-  drawMultilineText(ctx, document.getElementById("comment2").value, 600, 700, 650, 34, 40);
+  // 自己紹介 40文字改行
+  ctx.font = `30px ${selectedFont}`;
+  drawMultilineText(ctx, document.getElementById("comment2").value, 600, 700, 40, 32);
 }
 
-function drawMultilineText(ctx, text, x, y, maxWidth, lineHeight, maxCharsPerLine) {
-  const words = text.match(new RegExp(".{1," + maxCharsPerLine + "}", "g")) || [];
-  words.forEach((line, i) => {
-    ctx.fillText(line, x, y + i * lineHeight);
+function drawMultilineText(ctx, text, x, y, maxChars, lineHeight){
+  const lines = [];
+  for(let i=0;i<text.length;i+=maxChars){
+    lines.push(text.substring(i,i+maxChars));
+  }
+  lines.forEach((line,idx)=>{
+    ctx.fillText(line, x, y + idx*lineHeight);
   });
 }
 
-function downloadImage() {
+function downloadImage(){
   const link = document.createElement('a');
   link.download = 'card.png';
   try {
-    const dataURL = canvas.toDataURL('image/png');
-    link.href = dataURL;
+    link.href = canvas.toDataURL('image/png');
     link.click();
-  } catch (e) {
-    alert("保存できませんでした。ローカルで開いている場合はローカルサーバーを使ってください。");
+  } catch(e){
+    alert("保存できませんでした。ローカルサーバーを使用してください。");
     console.error(e);
   }
 }
