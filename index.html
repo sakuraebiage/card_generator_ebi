@@ -133,12 +133,14 @@
       if (bgImage) ctx.drawImage(bgImage, 143, 185, 385, 475);
       if (charaImg) ctx.drawImage(charaImg, 140, 180, 390, 497);
 
+      // 名前とキャスト
       ctx.font = "bold 48px serif";
       ctx.fillStyle = "black";
       ctx.textAlign = "left";
       ctx.fillText(document.getElementById("name").value, 710, 250);
       ctx.fillText(document.getElementById("cast").value, 710, 390);
 
+      // 役職マーク
       const rolePositionMap = {
         "後見人": { x: 755, y: 450, w: 96, h: 34 },
         "露店出店者": { x: 960, y: 450, w: 170, h: 34 },
@@ -158,17 +160,27 @@
         if (mark) ctx.fillRect(mark.x, mark.y, mark.w, mark.h);
       });
 
+      // ひとこと
       ctx.font = "bold 26px serif";
       ctx.fillStyle = "black";
       ctx.fillText("「" + document.getElementById("comment1").value + "」", 780, 660);
 
-      ctx.font = "30px serif";
-      drawMultilineText(ctx, document.getElementById("comment2").value, 600, 700, 650, 26);
+      // 自己紹介（20文字ごと改行、26px、行間30px）
+      ctx.font = "26px serif";
+      drawMultilineText(
+        ctx,
+        document.getElementById("comment2").value,
+        600,
+        700,
+        20,  // 20文字ごと
+        30   // 行間30px
+      );
     }
 
-    function drawMultilineText(ctx, text, x, y, maxWidth, lineHeight) {
-      const words = text.match(/.{1,30}/g) || [];
-      words.forEach((line, i) => {
+    // 文字数ベースの自動改行
+    function drawMultilineText(ctx, text, x, y, maxCharsPerLine, lineHeight) {
+      const lines = text.match(new RegExp(`.{1,${maxCharsPerLine}}`, 'g')) || [];
+      lines.forEach((line, i) => {
         ctx.fillText(line, x, y + i * lineHeight);
       });
     }
