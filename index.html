@@ -20,7 +20,7 @@
       flex-direction: column;
       gap: 10px;
       margin-top: 20px;
-      width: 350px;
+      width: 300px;
     }
     label {
       font-weight: bold;
@@ -42,10 +42,12 @@
       <option value="monospace">Monospace</option>
       <option value="cursive">Cursive</option>
       <option value="fantasy">Fantasy</option>
+      <option value="Handwriting, cursive">手描きフォント</option>
+      <option value="YuMincho, serif">遊明朝体</option>
     </select>
 
     <label>CAST:</label>
-    <input type="text" id="cast" maxlength="100">
+    <input type="text" id="cast" maxlength="30">
     <label>CASTフォント:</label>
     <select id="castFont">
       <option value="serif">Serif</option>
@@ -53,6 +55,8 @@
       <option value="monospace">Monospace</option>
       <option value="cursive">Cursive</option>
       <option value="fantasy">Fantasy</option>
+      <option value="Handwriting, cursive">手描きフォント</option>
+      <option value="YuMincho, serif">遊明朝体</option>
     </select>
 
     <label>役職を選択（複数選択可）:</label>
@@ -76,6 +80,8 @@
       <option value="monospace">Monospace</option>
       <option value="cursive">Cursive</option>
       <option value="fantasy">Fantasy</option>
+      <option value="Handwriting, cursive">手描きフォント</option>
+      <option value="YuMincho, serif">遊明朝体</option>
     </select>
 
     <label>自己紹介（120文字以内）:</label>
@@ -87,6 +93,8 @@
       <option value="monospace">Monospace</option>
       <option value="cursive">Cursive</option>
       <option value="fantasy">Fantasy</option>
+      <option value="Handwriting, cursive">手描きフォント</option>
+      <option value="YuMincho, serif">遊明朝体</option>
     </select>
 
     <label>背景画像を選択:</label>
@@ -116,14 +124,12 @@
 
     template.onload = draw;
 
-    document.querySelectorAll("#name, #cast, #comment1, #comment2").forEach(input => {
+    document.querySelectorAll("#name, #cast, #comment1, #comment2, #nameFont, #castFont, #comment1Font, #comment2Font").forEach(input => {
       input.addEventListener("input", draw);
+      input.addEventListener("change", draw);
     });
     document.querySelectorAll("input[name='role']").forEach(cb => {
       cb.addEventListener("change", draw);
-    });
-    document.querySelectorAll("#nameFont, #castFont, #comment1Font, #comment2Font").forEach(select => {
-      select.addEventListener("change", draw);
     });
 
     document.getElementById("imageUpload").addEventListener("change", function(e) {
@@ -164,6 +170,7 @@
     function draw() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.drawImage(template, 0, 0, canvas.width, canvas.height);
+
       if (bgImage) ctx.drawImage(bgImage, 143, 185, 385, 475);
       if (charaImg) ctx.drawImage(charaImg, 140, 180, 390, 497);
 
@@ -173,14 +180,16 @@
       ctx.textAlign = "left";
       ctx.fillText(document.getElementById("name").value, 710, 250);
 
-      // CAST 自動サイズ
-      const castText = document.getElementById("cast").value;
-      const castFontFamily = document.getElementById("castFont").value;
-      const castFontSize = fitText(ctx, castText, 600, 48, castFontFamily);
-      ctx.font = `bold ${castFontSize}px ${castFontFamily}`;
-      ctx.fillText(castText, 710, 390);
+      // CAST（自動サイズ調整）
+      const castInput = document.getElementById("cast");
+      let castFontSize = 48;
+      ctx.font = `${castFontSize}px ${document.getElementById("castFont").value}`;
+      while(ctx.measureText(castInput.value).width > 600 && castFontSize > 12){
+        castFontSize--;
+        ctx.font = `${castFontSize}px ${document.getElementById("castFont").value}`;
+      }
+      ctx.fillText(castInput.value, 710, 390);
 
-      // 役職マーク
       const rolePositionMap = {
         "後見人": { x: 755, y: 450, w: 96, h: 34 },
         "露店出店者": { x: 960, y: 450, w: 170, h: 34 },
@@ -193,6 +202,7 @@
       };
       const selectedRoles = Array.from(document.querySelectorAll("input[name='role']:checked"))
                                 .map(cb => cb.value);
+
       ctx.fillStyle = "rgba(255, 127, 127, 0.6)";
       selectedRoles.forEach(role => {
         const mark = rolePositionMap[role];
@@ -204,9 +214,9 @@
       ctx.fillStyle = "black";
       ctx.fillText("「" + document.getElementById("comment1").value + "」", 780, 660);
 
-      // 自己紹介（30文字ごと改行、行間30px）
+      // 自己紹介（40文字ごと改行）
       ctx.font = `26px ${document.getElementById("comment2Font").value}`;
-      drawMultilineText(ctx, document.getElementById("comment2").value, 600, 700, 30, 30);
+      drawMultilineText(ctx, document.getElementById("comment2").value, 40, 30);
     }
 
     function drawMultilineText(ctx, text, charsPerLine, lineHeight) {
@@ -217,16 +227,6 @@
       lines.forEach((line, i) => {
         ctx.fillText(line, 600, 700 + i * lineHeight);
       });
-    }
-
-    function fitText(ctx, text, maxWidth, maxFontSize, fontFamily) {
-      let fontSize = maxFontSize;
-      do {
-        ctx.font = `bold ${fontSize}px ${fontFamily}`;
-        if (ctx.measureText(text).width <= maxWidth) break;
-        fontSize -= 1;
-      } while (fontSize > 10);
-      return fontSize;
     }
 
     function downloadImage() {
@@ -244,7 +244,3 @@
   </script>
 </body>
 </html>
-
-</html>
-
-
