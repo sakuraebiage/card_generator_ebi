@@ -4,22 +4,18 @@
 <meta charset="UTF-8">
 <title>歳神巡幸祭カードジェネレーター</title>
 <style>
-  @font-face { font-family: "YorutegakiLight"; src: url("fonts/YorutegakiLight.otf"); }
-  @font-face { font-family: "YorutegakiRegular"; src: url("fonts/YorutegakiRegular.otf"); }
-  @font-face { font-family: "AnHina02"; src: url("fonts/AnHina02.otf"); }
-  @font-face { font-family: "msmincho"; src: url("fonts/msmincho.ttc"); }
-
-  body {
-    font-family: "serif";
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background: #f9f0e6;
-  }
-  canvas { border:1px solid #ccc; margin-top:20px; }
-  .form { display:flex; flex-direction:column; gap:10px; margin-top:20px; width:300px; }
-  label { font-weight:bold; }
-  input[type="text"], select, textarea { width:100%; }
+@font-face { font-family: 'AoyagiKouzangothic'; src: url('fonts/AoyagiKouzangothic.ttf'); }
+@font-face { font-family: 'YorutegakiLight'; src: url('fonts/YorutegakiLight.otf'); }
+@font-face { font-family: 'YorutegakiRegular'; src: url('fonts/YorutegakiRegular.otf'); }
+@font-face { font-family: 'AnHina02'; src: url('fonts/AnHina02.otf'); }
+body {
+  display: flex; flex-direction: column; align-items: center;
+  background: #f9f0e6;
+}
+canvas { border: 1px solid #ccc; margin-top: 20px; }
+.form { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; width: 300px; }
+label { font-weight: bold; }
+input[type="text"], select, textarea { width: 100%; }
 </style>
 </head>
 <body>
@@ -27,19 +23,21 @@
 <div class="form">
   <label>NAME:</label>
   <input type="text" id="name" maxlength="20">
-  <select id="nameFont">
+  <label>NAMEフォント:</label>
+  <select id="fontName">
     <option value="serif">標準</option>
-    <option value="msmincho">明朝体</option>
+    <option value="AoyagiKouzangothic">明朝体</option>
     <option value="YorutegakiLight">YorutegakiLight</option>
     <option value="YorutegakiRegular">YorutegakiRegular</option>
     <option value="AnHina02">AnHina02</option>
   </select>
 
   <label>CAST:</label>
-  <input type="text" id="cast" maxlength="30">
-  <select id="castFont">
+  <input type="text" id="cast">
+  <label>CASTフォント:</label>
+  <select id="fontCast">
     <option value="serif">標準</option>
-    <option value="msmincho">明朝体</option>
+    <option value="AoyagiKouzangothic">明朝体</option>
     <option value="YorutegakiLight">YorutegakiLight</option>
     <option value="YorutegakiRegular">YorutegakiRegular</option>
     <option value="AnHina02">AnHina02</option>
@@ -59,9 +57,10 @@
 
   <label>ひとこと（16文字以内）:</label>
   <input type="text" id="comment1" maxlength="16">
-  <select id="comment1Font">
+  <label>ひとことフォント:</label>
+  <select id="fontComment1">
     <option value="serif">標準</option>
-    <option value="msmincho">明朝体</option>
+    <option value="AoyagiKouzangothic">明朝体</option>
     <option value="YorutegakiLight">YorutegakiLight</option>
     <option value="YorutegakiRegular">YorutegakiRegular</option>
     <option value="AnHina02">AnHina02</option>
@@ -69,9 +68,10 @@
 
   <label>自己紹介（120文字以内）:</label>
   <textarea id="comment2" maxlength="120" rows="3"></textarea>
-  <select id="comment2Font">
+  <label>自己紹介フォント:</label>
+  <select id="fontComment2">
     <option value="serif">標準</option>
-    <option value="msmincho">明朝体</option>
+    <option value="AoyagiKouzangothic">明朝体</option>
     <option value="YorutegakiLight">YorutegakiLight</option>
     <option value="YorutegakiRegular">YorutegakiRegular</option>
     <option value="AnHina02">AnHina02</option>
@@ -80,9 +80,9 @@
   <label>背景画像を選択:</label>
   <select id="bgSelector">
     <option value="none">--- 選択してください ---</option>
-    <option value="緑.png">緑</option>
-    <option value="青.png">青</option>
-    <option value="橙.png">橙</option>
+    <option value="green.png">緑</option>
+    <option value="blue.png">青</option>
+    <option value="orange.png">橙</option>
   </select>
 
   <label>イラスト画像をアップロード（バストアップ700*800）:</label>
@@ -98,46 +98,40 @@ const canvas = document.getElementById("cardCanvas");
 const ctx = canvas.getContext("2d");
 const template = new Image();
 template.src = "サンプル2.png";
-
 let charaImg = null;
 let bgImage = null;
-
 template.onload = draw;
-document.querySelectorAll("#name,#cast,#comment1,#comment2").forEach(input=>{
-  input.addEventListener("input", draw);
-});
-document.querySelectorAll("input[name='role']").forEach(cb=>{
-  cb.addEventListener("change", draw);
-});
 
+['name','cast','comment1','comment2'].forEach(id => {
+  document.getElementById(id).addEventListener('input', draw);
+});
+document.querySelectorAll("input[name='role']").forEach(cb => cb.addEventListener('change', draw));
 document.getElementById("imageUpload").addEventListener("change", function(e){
   const reader = new FileReader();
-  reader.onload=function(event){
-    const img=new Image();
-    img.onload=()=>{
-      const scale=Math.min(390/img.width,480/img.height);
-      const w=img.width*scale;
-      const h=img.height*scale;
-      const offscreen=document.createElement("canvas");
-      offscreen.width=390;
-      offscreen.height=480;
-      const offCtx=offscreen.getContext("2d");
+  reader.onload = function(event){
+    const img = new Image();
+    img.onload = ()=>{
+      const scale = Math.min(390/img.width,480/img.height);
+      const w = img.width*scale, h=img.height*scale;
+      const offscreen = document.createElement('canvas');
+      offscreen.width=390; offscreen.height=480;
+      const offCtx = offscreen.getContext('2d');
       offCtx.clearRect(0,0,390,480);
       offCtx.drawImage(img,(390-w)/2,(480-h)/2,w,h);
-      charaImg=new Image();
+      charaImg = new Image();
       charaImg.onload=draw;
-      charaImg.src=offscreen.toDataURL();
+      charaImg.src = offscreen.toDataURL();
     };
-    img.src=event.target.result;
+    img.src = event.target.result;
   };
   reader.readAsDataURL(e.target.files[0]);
 });
 
 document.getElementById("bgSelector").addEventListener("change", function(){
   const bgPath=this.value;
-  if(bgPath==="none"){ bgImage=null; draw(); }
+  if(bgPath==='none'){ bgImage=null; draw(); }
   else{
-    bgImage=new Image();
+    bgImage = new Image();
     bgImage.onload=draw;
     bgImage.src=`images/${bgPath}`;
   }
@@ -149,46 +143,50 @@ function draw(){
   if(bgImage) ctx.drawImage(bgImage,143,185,385,475);
   if(charaImg) ctx.drawImage(charaImg,140,180,390,497);
 
-  // NAME
-  let nameText=document.getElementById("name").value;
-  let nameFont=document.getElementById("nameFont").value;
-  let nameSize=48;
-  if(nameFont.includes("Yorutegaki")) nameSize+=8;
-  ctx.font=`bold ${nameSize}px ${nameFont}`;
-  ctx.fillStyle="black";
-  ctx.fillText(nameText,710,250);
+  const nameFont = document.getElementById("fontName").value;
+  ctx.font = `bold 48px ${nameFont}`;
+  ctx.fillStyle="black"; ctx.textAlign="left";
+  ctx.fillText(document.getElementById("name").value,710,250);
 
-  // CAST
-  let castText=document.getElementById("cast").value;
-  let castFont=document.getElementById("castFont").value;
-  let castSize=48;
-  if(castFont.includes("Yorutegaki")) castSize+=8;
-  ctx.font=`bold ${castSize}px ${castFont}`;
-  while(ctx.measureText(castText).width>600 && castSize>10){ castSize--; ctx.font=`bold ${castSize}px ${castFont}`; }
+  const castFont = document.getElementById("fontCast").value;
+  let castText = document.getElementById("cast").value;
+  let castSize = 48;
+  while(ctx.measureText(castText).width>600 && castSize>12){ castSize--; }
+  ctx.font = `bold ${castSize}px ${castFont}`;
   ctx.fillText(castText,710,390);
 
-  // 役職
-  const rolePositionMap={
-    "後見人":{x:755,y:450,w:96,h:34},
-    "露店出店者":{x:960,y:450,w:170,h:34},
-    "縁者":{x:740,y:500,w:72,h:34},
-    "観客":{x:955,y:505,w:72,h:34},
-    "見学":{x:1125,y:510,w:72,h:34},
-    "主催":{x:745,y:550,w:72,h:34},
-    "運営":{x:950,y:550,w:72,h:34},
-    "斎人":{x:1125,y:550,w:72,h:34}
+  const rolePositionMap = {
+    "後見人": {x:755,y:450,w:96,h:34},"露店出店者":{x:960,y:450,w:170,h:34},
+    "縁者":{x:740,y:500,w:72,h:34},"観客":{x:955,y:505,w:72,h:34},
+    "見学":{x:1125,y:510,w:72,h:34},"主催":{x:745,y:550,w:72,h:34},
+    "運営":{x:950,y:550,w:72,h:34},"斎人":{x:1125,y:550,w:72,h:34},
   };
-  const selectedRoles=Array.from(document.querySelectorAll("input[name='role']:checked")).map(cb=>cb.value);
+  const selectedRoles = Array.from(document.querySelectorAll("input[name='role']:checked")).map(cb=>cb.value);
   ctx.fillStyle="rgba(255,127,127,0.6)";
   selectedRoles.forEach(role=>{ const mark=rolePositionMap[role]; if(mark) ctx.fillRect(mark.x,mark.y,mark.w,mark.h); });
 
-  // ひとこと
-  let comment1Font=document.getElementById("comment1Font").value;
-  let comment1Size=26;
-  if(comment1Font.includes("Yorutegaki")) comment1Size+=4;
-  ctx.font=`bold ${comment1Size}px ${comment1Font}`;
-  ctx.fillStyle="black";
+  const comment1Font = document.getElementById("fontComment1").value;
+  ctx.font = `bold 26px ${comment1Font}`; ctx.fillStyle="black";
   ctx.fillText("「"+document.getElementById("comment1").value+"」",780,660);
 
-  // 自己紹介（40文字で改行、行間36px）
-  let comment2Font=document.getElementById("comment2Font").value
+  const comment2Font = document.getElementById("fontComment2").value;
+  ctx.font = `30px ${comment2Font}`;
+  drawMultilineText(ctx, document.getElementById("comment2").value, 600,700,650,30,40);
+}
+
+function drawMultilineText(ctx,text,x,y,maxWidth,lineHeight,maxChars){
+  maxChars = maxChars||40;
+  const lines = text.match(new RegExp(`.{1,${maxChars}}`,'g'))||[];
+  lines.forEach((line,i)=> ctx.fillText(line,x,y+i*lineHeight));
+}
+
+function downloadImage(){
+  const link = document.createElement('a');
+  link.download='card.png';
+  try{
+    link.href=canvas.toDataURL('image/png'); link.click();
+  }catch(e){ alert("保存できませんでした。ローカルサーバーで試してください"); console.error(e); }
+}
+</script>
+</body>
+</html>
