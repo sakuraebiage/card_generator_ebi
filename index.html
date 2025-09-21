@@ -4,6 +4,23 @@
   <meta charset="UTF-8">
   <title>歳神巡幸祭カードジェネレーター</title>
   <style>
+    @font-face {
+      font-family: 'AoyagiKozan';
+      src: url('fonts/AoyagiKozan.ttf') format('truetype');
+    }
+    @font-face {
+      font-family: 'YoruTegakiLight';
+      src: url('fonts/YorutegakiLight.otf') format('opentype');
+    }
+    @font-face {
+      font-family: 'YoruTegakiRegular';
+      src: url('fonts/YorutegakiRegular.otf') format('opentype');
+    }
+    @font-face {
+      font-family: 'AnHina02';
+      src: url('fonts/AnHina02.otf') format('opentype');
+    }
+
     body {
       font-family: "serif";
       display: flex;
@@ -35,28 +52,22 @@
   <div class="form">
     <label>NAME:</label>
     <input type="text" id="name" maxlength="20">
-    <label>NAMEフォント:</label>
-    <select id="nameFont">
-      <option value="serif">Serif</option>
-      <option value="sans-serif">Sans-serif</option>
-      <option value="monospace">Monospace</option>
-      <option value="cursive">Cursive</option>
-      <option value="fantasy">Fantasy</option>
-      <option value="Handwriting, cursive">手描きフォント</option>
-      <option value="YuMincho, serif">遊明朝体</option>
+    <select id="fontName">
+      <option value="serif">標準</option>
+      <option value="AoyagiKozan">青柳衡山フォント</option>
+      <option value="YoruTegakiLight">Yorutegaki Light</option>
+      <option value="YoruTegakiRegular">Yorutegaki Regular</option>
+      <option value="AnHina02">AnHina02</option>
     </select>
 
     <label>CAST:</label>
     <input type="text" id="cast" maxlength="30">
-    <label>CASTフォント:</label>
-    <select id="castFont">
-      <option value="serif">Serif</option>
-      <option value="sans-serif">Sans-serif</option>
-      <option value="monospace">Monospace</option>
-      <option value="cursive">Cursive</option>
-      <option value="fantasy">Fantasy</option>
-      <option value="Handwriting, cursive">手描きフォント</option>
-      <option value="YuMincho, serif">遊明朝体</option>
+    <select id="fontCast">
+      <option value="serif">標準</option>
+      <option value="AoyagiKozan">青柳衡山フォント</option>
+      <option value="YoruTegakiLight">Yorutegaki Light</option>
+      <option value="YoruTegakiRegular">Yorutegaki Regular</option>
+      <option value="AnHina02">AnHina02</option>
     </select>
 
     <label>役職を選択（複数選択可）:</label>
@@ -73,28 +84,22 @@
 
     <label>ひとこと（16文字以内）:</label>
     <input type="text" id="comment1" maxlength="16">
-    <label>ひとことフォント:</label>
-    <select id="comment1Font">
-      <option value="serif">Serif</option>
-      <option value="sans-serif">Sans-serif</option>
-      <option value="monospace">Monospace</option>
-      <option value="cursive">Cursive</option>
-      <option value="fantasy">Fantasy</option>
-      <option value="Handwriting, cursive">手描きフォント</option>
-      <option value="YuMincho, serif">遊明朝体</option>
+    <select id="fontComment1">
+      <option value="serif">標準</option>
+      <option value="AoyagiKozan">青柳衡山フォント</option>
+      <option value="YoruTegakiLight">Yorutegaki Light</option>
+      <option value="YoruTegakiRegular">Yorutegaki Regular</option>
+      <option value="AnHina02">AnHina02</option>
     </select>
 
     <label>自己紹介（120文字以内）:</label>
     <textarea id="comment2" maxlength="120" rows="3"></textarea>
-    <label>自己紹介フォント:</label>
-    <select id="comment2Font">
-      <option value="serif">Serif</option>
-      <option value="sans-serif">Sans-serif</option>
-      <option value="monospace">Monospace</option>
-      <option value="cursive">Cursive</option>
-      <option value="fantasy">Fantasy</option>
-      <option value="Handwriting, cursive">手描きフォント</option>
-      <option value="YuMincho, serif">遊明朝体</option>
+    <select id="fontComment2">
+      <option value="serif">標準</option>
+      <option value="AoyagiKozan">青柳衡山フォント</option>
+      <option value="YoruTegakiLight">Yorutegaki Light</option>
+      <option value="YoruTegakiRegular">Yorutegaki Regular</option>
+      <option value="AnHina02">AnHina02</option>
     </select>
 
     <label>背景画像を選択:</label>
@@ -124,7 +129,7 @@
 
     template.onload = draw;
 
-    document.querySelectorAll("#name, #cast, #comment1, #comment2, #nameFont, #castFont, #comment1Font, #comment2Font").forEach(input => {
+    document.querySelectorAll("#name, #cast, #comment1, #comment2, #fontName, #fontCast, #fontComment1, #fontComment2").forEach(input => {
       input.addEventListener("input", draw);
       input.addEventListener("change", draw);
     });
@@ -175,21 +180,23 @@
       if (charaImg) ctx.drawImage(charaImg, 140, 180, 390, 497);
 
       // NAME
-      ctx.font = `bold 48px ${document.getElementById("nameFont").value}`;
+      let fontName = document.getElementById("fontName").value;
+      ctx.font = `bold 48px '${fontName}'`;
       ctx.fillStyle = "black";
       ctx.textAlign = "left";
       ctx.fillText(document.getElementById("name").value, 710, 250);
 
-      // CAST（自動サイズ調整）
-      const castInput = document.getElementById("cast");
-      let castFontSize = 48;
-      ctx.font = `${castFontSize}px ${document.getElementById("castFont").value}`;
-      while(ctx.measureText(castInput.value).width > 600 && castFontSize > 12){
-        castFontSize--;
-        ctx.font = `${castFontSize}px ${document.getElementById("castFont").value}`;
-      }
-      ctx.fillText(castInput.value, 710, 390);
+      // CAST（自動調整）
+      let castText = document.getElementById("cast").value;
+      let fontCast = document.getElementById("fontCast").value;
+      let fontSize = 48;
+      do {
+        ctx.font = `bold ${fontSize}px '${fontCast}'`;
+        fontSize--;
+      } while(ctx.measureText(castText).width > 600 && fontSize > 10);
+      ctx.fillText(castText, 710, 390);
 
+      // 役職
       const rolePositionMap = {
         "後見人": { x: 755, y: 450, w: 96, h: 34 },
         "露店出店者": { x: 960, y: 450, w: 170, h: 34 },
@@ -210,22 +217,24 @@
       });
 
       // ひとこと
-      ctx.font = `bold 26px ${document.getElementById("comment1Font").value}`;
+      let fontComment1 = document.getElementById("fontComment1").value;
+      ctx.font = `bold 26px '${fontComment1}'`;
       ctx.fillStyle = "black";
       ctx.fillText("「" + document.getElementById("comment1").value + "」", 780, 660);
 
-      // 自己紹介（40文字ごと改行）
-      ctx.font = `26px ${document.getElementById("comment2Font").value}`;
-      drawMultilineText(ctx, document.getElementById("comment2").value, 40, 30);
+      // 自己紹介（40字ごとに改行、行間30px）
+      let fontComment2 = document.getElementById("fontComment2").value;
+      ctx.font = `30px '${fontComment2}'`;
+      drawMultilineText(ctx, document.getElementById("comment2").value, 600, 700, 40, 30);
     }
 
-    function drawMultilineText(ctx, text, charsPerLine, lineHeight) {
-      const lines = [];
+    function drawMultilineText(ctx, text, charsPerLine, startX, startY, lineHeight) {
+      let lines = [];
       for (let i = 0; i < text.length; i += charsPerLine) {
         lines.push(text.slice(i, i + charsPerLine));
       }
       lines.forEach((line, i) => {
-        ctx.fillText(line, 600, 700 + i * lineHeight);
+        ctx.fillText(line, startX, startY + i * lineHeight);
       });
     }
 
