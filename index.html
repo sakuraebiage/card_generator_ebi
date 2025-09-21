@@ -182,7 +182,7 @@ function draw() {
   ctx.fillStyle = "black";
   ctx.fillText("「"+document.getElementById("comment1").value+"」",780,660);
 
-  // Comment2 (40字で改行)
+  // Comment2 (120字まで)
   ctx.font = `30px '${selectedFont}'`;
   drawMultilineText(ctx, document.getElementById("comment2").value,600,700,650,30,40);
 }
@@ -206,3 +206,4 @@ function downloadImage(){
 </script>
 </body>
 </html>
+
