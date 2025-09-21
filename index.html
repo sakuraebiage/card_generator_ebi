@@ -223,8 +223,8 @@ function draw(){
 
   // 自己紹介
   const comment2Font = document.getElementById("fontComment2").value;
-  let comment2Size = comment2Font.includes("Yorutegaki") ? 36 : 30;
-  let lineHeight = comment2Font.includes("Yorutegaki") ? 42 : 30;
+  let comment2Size = comment2Font.includes("Yorutegaki") ? 50 : 30;
+  let lineHeight = comment2Font.includes("Yorutegaki") ? 50 : 30;
   ctx.font = `${comment2Size}px ${comment2Font}`;
   drawMultilineText(ctx, document.getElementById("comment2").value, 600,700,650,comment2Size,lineHeight);
 }
@@ -250,3 +250,4 @@ function downloadImage(){
 </script>
 </body>
 </html>
+
