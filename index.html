@@ -20,7 +20,7 @@
       flex-direction: column;
       gap: 10px;
       margin-top: 20px;
-      width: 300px;
+      width: 350px;
     }
     label {
       font-weight: bold;
@@ -45,7 +45,7 @@
     </select>
 
     <label>CAST:</label>
-    <input type="text" id="cast">
+    <input type="text" id="cast" maxlength="100">
     <label>CASTフォント:</label>
     <select id="castFont">
       <option value="serif">Serif</option>
@@ -116,10 +116,15 @@
 
     template.onload = draw;
 
-    // 入力イベント
-    document.querySelectorAll("#name, #cast, #comment1, #comment2, #nameFont, #castFont, #comment1Font, #comment2Font")
-      .forEach(input => input.addEventListener("input", draw));
-    document.querySelectorAll("input[name='role']").forEach(cb => cb.addEventListener("change", draw));
+    document.querySelectorAll("#name, #cast, #comment1, #comment2").forEach(input => {
+      input.addEventListener("input", draw);
+    });
+    document.querySelectorAll("input[name='role']").forEach(cb => {
+      cb.addEventListener("change", draw);
+    });
+    document.querySelectorAll("#nameFont, #castFont, #comment1Font, #comment2Font").forEach(select => {
+      select.addEventListener("change", draw);
+    });
 
     document.getElementById("imageUpload").addEventListener("change", function(e) {
       const reader = new FileReader();
@@ -159,7 +164,6 @@
     function draw() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.drawImage(template, 0, 0, canvas.width, canvas.height);
-
       if (bgImage) ctx.drawImage(bgImage, 143, 185, 385, 475);
       if (charaImg) ctx.drawImage(charaImg, 140, 180, 390, 497);
 
@@ -171,12 +175,12 @@
 
       // CAST 自動サイズ
       const castText = document.getElementById("cast").value;
-      const castFont = document.getElementById("castFont").value;
-      const castFontSize = fitText(ctx, castText, 600, 48, castFont);
-      ctx.font = `bold ${castFontSize}px ${castFont}`;
+      const castFontFamily = document.getElementById("castFont").value;
+      const castFontSize = fitText(ctx, castText, 600, 48, castFontFamily);
+      ctx.font = `bold ${castFontSize}px ${castFontFamily}`;
       ctx.fillText(castText, 710, 390);
 
-      // 役職
+      // 役職マーク
       const rolePositionMap = {
         "後見人": { x: 755, y: 450, w: 96, h: 34 },
         "露店出店者": { x: 960, y: 450, w: 170, h: 34 },
@@ -189,8 +193,7 @@
       };
       const selectedRoles = Array.from(document.querySelectorAll("input[name='role']:checked"))
                                 .map(cb => cb.value);
-
-      ctx.fillStyle = "rgba(255, 127, 127, 127, 0.6)";
+      ctx.fillStyle = "rgba(255, 127, 127, 0.6)";
       selectedRoles.forEach(role => {
         const mark = rolePositionMap[role];
         if (mark) ctx.fillRect(mark.x, mark.y, mark.w, mark.h);
@@ -201,22 +204,21 @@
       ctx.fillStyle = "black";
       ctx.fillText("「" + document.getElementById("comment1").value + "」", 780, 660);
 
-      // 自己紹介（30文字ごとに改行、行間30px）
+      // 自己紹介（30文字ごと改行、行間30px）
       ctx.font = `26px ${document.getElementById("comment2Font").value}`;
       drawMultilineText(ctx, document.getElementById("comment2").value, 600, 700, 30, 30);
     }
 
-    function drawMultilineText(ctx, text, x, y, charsPerLine, lineHeight) {
+    function drawMultilineText(ctx, text, charsPerLine, lineHeight) {
       const lines = [];
       for (let i = 0; i < text.length; i += charsPerLine) {
         lines.push(text.slice(i, i + charsPerLine));
       }
       lines.forEach((line, i) => {
-        ctx.fillText(line, x, y + i * lineHeight);
+        ctx.fillText(line, 600, 700 + i * lineHeight);
       });
     }
 
-    // CASTの自動サイズ計算
     function fitText(ctx, text, maxWidth, maxFontSize, fontFamily) {
       let fontSize = maxFontSize;
       do {
@@ -242,4 +244,7 @@
   </script>
 </body>
 </html>
+
+</html>
+
 
