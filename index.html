@@ -37,7 +37,7 @@
       flex-direction: column;
       gap: 10px;
       margin-top: 20px;
-      width: 350px;
+      width: 300px;
     }
     label {
       font-weight: bold;
@@ -52,21 +52,23 @@
   <div class="form">
     <label>NAME:</label>
     <input type="text" id="name" maxlength="20">
-    <select id="nameFont">
+    <label>フォント:</label>
+    <select id="fontNameName">
       <option value="serif">標準</option>
-      <option value="AoyagiKozan">青柳衡山フォントT</option>
-      <option value="YoruTegakiLight">夜手書きLight</option>
-      <option value="YoruTegakiRegular">夜手書きRegular</option>
+      <option value="AoyagiKozan">青柳衡山フォント</option>
+      <option value="YoruTegakiLight">手書きライト</option>
+      <option value="YoruTegakiRegular">手書きレギュラー</option>
       <option value="AnHina02">AnHina02</option>
     </select>
 
     <label>CAST:</label>
     <input type="text" id="cast" maxlength="30">
-    <select id="castFont">
+    <label>フォント:</label>
+    <select id="fontNameCast">
       <option value="serif">標準</option>
-      <option value="AoyagiKozan">青柳衡山フォントT</option>
-      <option value="YoruTegakiLight">夜手書きLight</option>
-      <option value="YoruTegakiRegular">夜手書きRegular</option>
+      <option value="AoyagiKozan">青柳衡山フォント</option>
+      <option value="YoruTegakiLight">手書きライト</option>
+      <option value="YoruTegakiRegular">手書きレギュラー</option>
       <option value="AnHina02">AnHina02</option>
     </select>
 
@@ -84,21 +86,23 @@
 
     <label>ひとこと（16文字以内）:</label>
     <input type="text" id="comment1" maxlength="16">
-    <select id="comment1Font">
+    <label>フォント:</label>
+    <select id="fontNameComment1">
       <option value="serif">標準</option>
-      <option value="AoyagiKozan">青柳衡山フォントT</option>
-      <option value="YoruTegakiLight">夜手書きLight</option>
-      <option value="YoruTegakiRegular">夜手書きRegular</option>
+      <option value="AoyagiKozan">青柳衡山フォント</option>
+      <option value="YoruTegakiLight">手書きライト</option>
+      <option value="YoruTegakiRegular">手書きレギュラー</option>
       <option value="AnHina02">AnHina02</option>
     </select>
 
-    <label>自己紹介（120文字以内）:</label>
-    <textarea id="comment2" maxlength="120" rows="3"></textarea>
-    <select id="comment2Font">
+    <label>自己紹介（40文字で改行）:</label>
+    <textarea id="comment2" maxlength="120" rows="5"></textarea>
+    <label>フォント:</label>
+    <select id="fontNameComment2">
       <option value="serif">標準</option>
-      <option value="AoyagiKozan">青柳衡山フォントT</option>
-      <option value="YoruTegakiLight">夜手書きLight</option>
-      <option value="YoruTegakiRegular">夜手書きRegular</option>
+      <option value="AoyagiKozan">青柳衡山フォント</option>
+      <option value="YoruTegakiLight">手書きライト</option>
+      <option value="YoruTegakiRegular">手書きレギュラー</option>
       <option value="AnHina02">AnHina02</option>
     </select>
 
@@ -129,30 +133,27 @@
 
     template.onload = draw;
 
-    document.querySelectorAll("#name, #cast, #comment1, #comment2").forEach(input => {
-      input.addEventListener("input", draw);
-    });
-    document.querySelectorAll("#nameFont, #castFont, #comment1Font, #comment2Font").forEach(select => {
-      select.addEventListener("change", draw);
+    const inputs = ["name","cast","comment1","comment2"];
+    inputs.forEach(id => {
+      document.getElementById(id).addEventListener("input", draw);
     });
     document.querySelectorAll("input[name='role']").forEach(cb => {
       cb.addEventListener("change", draw);
     });
 
-    document.getElementById("imageUpload").addEventListener("change", function(e) {
+    document.getElementById("imageUpload").addEventListener("change", function(e){
       const reader = new FileReader();
-      reader.onload = function(event) {
+      reader.onload = function(event){
         const img = new Image();
         img.onload = () => {
-          const scale = Math.min(390 / img.width, 480 / img.height);
-          const w = img.width * scale;
-          const h = img.height * scale;
+          const scale = Math.min(390/img.width,480/img.height);
+          const w = img.width*scale;
+          const h = img.height*scale;
           const offscreen = document.createElement("canvas");
           offscreen.width = 390;
           offscreen.height = 480;
           const offCtx = offscreen.getContext("2d");
-          offCtx.clearRect(0, 0, 390, 480);
-          offCtx.drawImage(img, (390 - w) / 2, (480 - h) / 2, w, h);
+          offCtx.drawImage(img,(390-w)/2,(480-h)/2,w,h);
           charaImg = new Image();
           charaImg.onload = draw;
           charaImg.src = offscreen.toDataURL();
@@ -162,37 +163,36 @@
       reader.readAsDataURL(e.target.files[0]);
     });
 
-    document.getElementById("bgSelector").addEventListener("change", function () {
+    document.getElementById("bgSelector").addEventListener("change", function(){
       const bgPath = this.value;
-      if (bgPath === "none") {
-        bgImage = null;
-        draw();
-      } else {
+      if(bgPath==="none"){ bgImage=null; draw(); }
+      else{
         bgImage = new Image();
         bgImage.onload = draw;
         bgImage.src = `images/${bgPath}`;
       }
     });
 
-    function draw() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.drawImage(template, 0, 0, canvas.width, canvas.height);
-
-      if (bgImage) ctx.drawImage(bgImage, 143, 185, 385, 475);
-      if (charaImg) ctx.drawImage(charaImg, 140, 180, 390, 497);
+    function draw(){
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      ctx.drawImage(template,0,0,canvas.width,canvas.height);
+      if(bgImage) ctx.drawImage(bgImage,143,185,385,475);
+      if(charaImg) ctx.drawImage(charaImg,140,180,390,497);
 
       // NAME
-      const nameFont = document.getElementById("nameFont").value;
-      ctx.font = "bold 48px " + nameFont;
+      ctx.font = `48px ${document.getElementById("fontNameName").value}`;
       ctx.fillStyle = "black";
-      ctx.textAlign = "left";
-      ctx.fillText(document.getElementById("name").value, 710, 250);
+      ctx.fillText(document.getElementById("name").value,710,250);
 
       // CAST（自動調整）
-      const castFont = document.getElementById("castFont").value;
-      ctx.font = "bold 40px " + castFont;
       const castText = document.getElementById("cast").value;
-      ctx.fillText(castText, 710, 390);
+      let castFontSize = 48;
+      do{
+        ctx.font = `${castFontSize}px ${document.getElementById("fontNameCast").value}`;
+        if(ctx.measureText(castText).width <= 600) break;
+        castFontSize--;
+      }while(castFontSize>10);
+      ctx.fillText(castText,710,390);
 
       // 役職
       const rolePositionMap = {
@@ -205,44 +205,35 @@
         "運営": { x: 950, y: 550, w: 72, h: 34 },
         "斎人": { x: 1125, y: 550, w: 72, h: 34 },
       };
-      const selectedRoles = Array.from(document.querySelectorAll("input[name='role']:checked"))
-                                .map(cb => cb.value);
-      ctx.fillStyle = "rgba(255, 127, 127, 0.6)";
-      selectedRoles.forEach(role => {
+      const selectedRoles = Array.from(document.querySelectorAll("input[name='role']:checked")).map(cb=>cb.value);
+      ctx.fillStyle="rgba(255,127,127,0.6)";
+      selectedRoles.forEach(role=>{
         const mark = rolePositionMap[role];
-        if (mark) ctx.fillRect(mark.x, mark.y, mark.w, mark.h);
+        if(mark) ctx.fillRect(mark.x,mark.y,mark.w,mark.h);
       });
 
       // ひとこと
-      const comment1Font = document.getElementById("comment1Font").value;
-      ctx.font = "bold 26px " + comment1Font;
-      ctx.fillStyle = "black";
-      ctx.fillText("「" + document.getElementById("comment1").value + "」", 780, 660);
+      ctx.font = `26px ${document.getElementById("fontNameComment1").value}`;
+      ctx.fillStyle="black";
+      ctx.fillText("「"+document.getElementById("comment1").value+"」",780,660);
 
       // 自己紹介（40字で改行）
-      const comment2Font = document.getElementById("comment2Font").value;
-      ctx.font = "28px " + comment2Font;
-      drawMultilineText(ctx, document.getElementById("comment2").value, 600, 700, 650, 32, 40);
+      ctx.font = `28px ${document.getElementById("fontNameComment2").value}`;
+      drawMultilineText(ctx,document.getElementById("comment2").value,600,700,650,34,40);
     }
 
-    function drawMultilineText(ctx, text, x, y, maxWidth, lineHeight, charsPerLine) {
-      const lines = [];
-      for (let i = 0; i < text.length; i += charsPerLine) {
-        lines.push(text.substr(i, charsPerLine));
-      }
-      lines.forEach((line, i) => {
-        ctx.fillText(line, x, y + i * lineHeight);
-      });
+    function drawMultilineText(ctx,text,x,y,maxWidth,lineHeight,charsPerLine){
+      const lines = text.match(new RegExp(".{1,"+charsPerLine+"}","g"))||[];
+      lines.forEach((line,i)=>ctx.fillText(line,x,y+i*lineHeight));
     }
 
-    function downloadImage() {
-      const link = document.createElement('a');
-      link.download = 'card.png';
-      try {
-        const dataURL = canvas.toDataURL('image/png');
-        link.href = dataURL;
+    function downloadImage(){
+      const link=document.createElement('a');
+      link.download='card.png';
+      try{
+        link.href=canvas.toDataURL('image/png');
         link.click();
-      } catch (e) {
+      }catch(e){
         alert("保存できませんでした。ローカルで開いている場合はローカルサーバーを使ってください。");
         console.error(e);
       }
