@@ -165,16 +165,16 @@
       ctx.fillStyle = "black";
       ctx.fillText("「" + document.getElementById("comment1").value + "」", 780, 660);
 
-      // 自己紹介（20文字ごと改行、26px、行間30px）
-      ctx.font = "26px serif";
-      drawMultilineText(
-        ctx,
-        document.getElementById("comment2").value,
-        600,
-        700,
-        20,  // 20文字ごと
-        30   // 行間30px
-      );
+// 自己紹介（30文字ごと改行、26px、行間30px）
+ctx.font = "26px serif";
+drawMultilineText(
+  ctx,
+  document.getElementById("comment2").value,
+  600,
+  700,
+  30,  // 30文字ごとに改行
+  30   // 行間30px
+);
     }
 
     // 文字数ベースの自動改行
@@ -200,6 +200,7 @@
   </script>
 </body>
 </html>
+
 
 
 
