@@ -4,6 +4,27 @@
 <meta charset="UTF-8">
 <title>歳神巡幸祭カードジェネレーター</title>
 <style>
+@font-face {
+  font-family: 'YorutegakiRegular';
+  src: url('YorutegakiRegular.otf') format('opentype');
+}
+@font-face {
+  font-family: 'YorutegakiLight';
+  src: url('YorutegakiLight.otf') format('opentype');
+}
+@font-face {
+  font-family: 'AnHina02';
+  src: url('AnHina02.otf') format('opentype');
+}
+@font-face {
+  font-family: 'MSMincho';
+  src: url('msmincho.ttc') format('truetype-collection');
+}
+@font-face {
+  font-family: 'AoyagiKouzann';
+  src: url('青柳衡山フォントT.ttf') format('truetype');
+}
+
 body {
   display: flex;
   flex-direction: column;
@@ -38,7 +59,8 @@ input[type="text"], select, textarea { width: 100%; }
   <option value="YorutegakiRegular">YorutegakiRegular</option>
   <option value="YorutegakiLight">YorutegakiLight</option>
   <option value="AnHina02">AnHina02</option>
-  <option value="msmincho.ttc">MS Mincho</option>
+  <option value="MSMincho">MS Mincho</option>
+  <option value="AoyagiKouzann">青柳衡山フォント</option>
 </select>
 
 <label>CAST:</label>
@@ -49,7 +71,8 @@ input[type="text"], select, textarea { width: 100%; }
   <option value="YorutegakiRegular">YorutegakiRegular</option>
   <option value="YorutegakiLight">YorutegakiLight</option>
   <option value="AnHina02">AnHina02</option>
-  <option value="msmincho.ttc">MS Mincho</option>
+  <option value="MSMincho">MS Mincho</option>
+  <option value="AoyagiKouzann">青柳衡山フォント</option>
 </select>
 
 <label>役職（複数可）:</label>
@@ -69,6 +92,7 @@ input[type="text"], select, textarea { width: 100%; }
 <select id="fontComment1">
   <option value="serif">Serif</option>
   <option value="YorutegakiRegular">YorutegakiRegular</option>
+  <option value="AoyagiKouzann">青柳衡山フォント</option>
 </select>
 
 <label>自己紹介（40文字で自動改行、上限120文字）:</label>
@@ -77,6 +101,7 @@ input[type="text"], select, textarea { width: 100%; }
   <option value="serif">Serif</option>
   <option value="YorutegakiRegular">YorutegakiRegular</option>
   <option value="YorutegakiLight">YorutegakiLight</option>
+  <option value="AoyagiKouzann">青柳衡山フォント</option>
 </select>
 
 <label>背景画像:</label>
@@ -146,17 +171,10 @@ function draw(){
   if(charaImg) ctx.drawImage(charaImg,140,180,390,497);
 
   // NAME
-  const nameText = document.getElementById("name").value;
-  const nameFont = document.getElementById("fontName").value;
-  ctx.font = `bold 48px ${nameFont}`;
-  ctx.fillStyle="black";
-  ctx.textAlign="left";
-  drawAutoFitText(ctx,nameText,710,250,600,nameFont);
+  drawAutoFitText(ctx, document.getElementById("name").value,710,250,600,document.getElementById("fontName").value,48);
 
   // CAST
-  const castText = document.getElementById("cast").value;
-  const castFont = document.getElementById("fontCast").value;
-  drawAutoFitText(ctx,castText,710,390,600,castFont);
+  drawAutoFitText(ctx, document.getElementById("cast").value,710,390,600,document.getElementById("fontCast").value,48);
 
   // 役職
   const rolePos = { "後見人":{x:755,y:450,w:96,h:34},"露店出店者":{x:960,y:450,w:170,h:34},
@@ -168,36 +186,33 @@ function draw(){
   selectedRoles.forEach(r=>{ const m=rolePos[r]; if(m) ctx.fillRect(m.x,m.y,m.w,m.h); });
 
   // ひとこと
-  const c1Text = document.getElementById("comment1").value;
-  const c1Font = document.getElementById("fontComment1").value;
-  ctx.font=`bold 26px ${c1Font}`;
+  ctx.font=`bold 26px ${document.getElementById("fontComment1").value}`;
   ctx.fillStyle="black";
-  ctx.fillText("「"+c1Text+"」",780,660);
+  ctx.fillText("「"+document.getElementById("comment1").value+"」",780,660);
 
   // 自己紹介
-  const c2Text = document.getElementById("comment2").value;
-  const c2Font = document.getElementById("fontComment2").value;
-  ctx.font = `30px ${c2Font}`;
-  drawMultilineText(ctx,c2Text,600,700,650,26,40);
+  ctx.font=`30px ${document.getElementById("fontComment2").value}`;
+  drawMultilineText(ctx, document.getElementById("comment2").value,600,700,650,30,40);
 }
 
-// 自動サイズ調整して描画
-function drawAutoFitText(ctx,text,x,y,maxWidth,font){
-  let fontSize=48;
-  const isYoru=/Yorutegaki/.test(font);
-  const factor=isYoru?1.2:1.0;
+// 自動サイズ調整＆Yorutegaki/青柳縦位置調整
+function drawAutoFitText(ctx,text,x,y,maxWidth,font,baseSize){
+  let fontSize=baseSize;
+  const isYoruOrAoya=/Yorutegaki|AoyagiKouzann/.test(font);
   ctx.font=`bold ${fontSize}px ${font}`;
-  while(ctx.measureText(text).width*factor>maxWidth && fontSize>10){
+  while(ctx.measureText(text).width>maxWidth && fontSize>10){
     fontSize--;
     ctx.font=`bold ${fontSize}px ${font}`;
   }
-  ctx.fillText(text,x,y);
+  const yOffset = isYoruOrAoya ? fontSize*0.15 : 0;
+  ctx.fillStyle="black";
+  ctx.fillText(text,x,y+yOffset);
 }
 
 // 自動改行
 function drawMultilineText(ctx,text,x,y,maxWidth,lineHeight,maxChars){
-  const words=text.match(new RegExp(`.{1,${maxChars}}`,"g"))||[];
-  words.forEach((line,i)=>{
+  const lines=text.match(new RegExp(`.{1,${maxChars}}`,"g"))||[];
+  lines.forEach((line,i)=>{
     ctx.fillText(line,x,y+i*lineHeight);
   });
 }
@@ -216,4 +231,3 @@ function downloadImage(){
 </script>
 </body>
 </html>
-
