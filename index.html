@@ -1,131 +1,96 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <title>歳神巡幸祭カードジェネレーター</title>
-  <style>
-    @font-face {
-      font-family: 'YorutegakiLight';
-      src: url('fonts/YorutegakiLight.otf') format('opentype');
-    }
-    @font-face {
-      font-family: 'YorutegakiRegular';
-      src: url('fonts/YorutegakiRegular.otf') format('opentype');
-    }
-    @font-face {
-      font-family: 'AnHina02';
-      src: url('fonts/AnHina02.otf') format('opentype');
-    }
-    @font-face {
-      font-family: 'AoyagiKozanT';
-      src: url('fonts/AoyagiKozanT.ttf') format('truetype');
-    }
-    @font-face {
-      font-family: 'MSMincho';
-      src: url('fonts/msmincho.ttc') format('truetype');
-    }
-
-    body {
-      font-family: "serif";
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      background: #f9f0e6;
-    }
-    canvas {
-      border: 1px solid #ccc;
-      margin-top: 20px;
-    }
-    .form {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-top: 20px;
-      width: 300px;
-    }
-    label {
-      font-weight: bold;
-    }
-    input[type="text"], select, textarea {
-      width: 100%;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>歳神巡幸祭カードジェネレーター</title>
+<style>
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #f9f0e6;
+  font-family: "serif";
+}
+canvas {
+  border: 1px solid #ccc;
+  margin-top: 20px;
+}
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+  width: 300px;
+}
+label { font-weight: bold; }
+input[type="text"], select, textarea { width: 100%; }
+</style>
 </head>
 <body>
-<h2>歳神巡幸祭カードジェネレーター</h2>
+<h2>自己紹介カードジェネレーター</h2>
 <div class="form">
-  <label>NAME:</label>
-  <input type="text" id="name" maxlength="20">
-  <label>NAMEフォント:</label>
-  <select id="fontName">
-    <option value="serif">標準</option>
-    <option value="YorutegakiLight">YorutegakiLight</option>
-    <option value="YorutegakiRegular">YorutegakiRegular</option>
-    <option value="AnHina02">AnHina02</option>
-    <option value="AoyagiKozanT">AoyagiKozanT</option>
-    <option value="MSMincho">MSMincho</option>
-  </select>
 
-  <label>CAST:</label>
-  <input type="text" id="cast" maxlength="30">
-  <label>CASTフォント:</label>
-  <select id="fontCast">
-    <option value="serif">標準</option>
-    <option value="YorutegakiLight">YorutegakiLight</option>
-    <option value="YorutegakiRegular">YorutegakiRegular</option>
-    <option value="AnHina02">AnHina02</option>
-    <option value="AoyagiKozanT">AoyagiKozanT</option>
-    <option value="MSMincho">MSMincho</option>
-  </select>
+<label>NAME:</label>
+<input type="text" id="name" maxlength="20">
+<select id="fontName">
+  <option value="serif">Serif</option>
+  <option value="sans-serif">Sans-serif</option>
+  <option value="YorutegakiRegular">YorutegakiRegular</option>
+  <option value="YorutegakiLight">YorutegakiLight</option>
+  <option value="AnHina02">AnHina02</option>
+  <option value="msmincho.ttc">MS Mincho</option>
+</select>
 
-  <label>役職を選択（複数選択可）:</label>
-  <div id="roleContainer">
-    <label><input type="checkbox" name="role" value="後見人"> 後見人</label>
-    <label><input type="checkbox" name="role" value="露店出店者"> 露店出店者</label>
-    <label><input type="checkbox" name="role" value="縁者"> 縁者</label>
-    <label><input type="checkbox" name="role" value="観客"> 観客</label>
-    <label><input type="checkbox" name="role" value="見学"> 見学</label>
-    <label><input type="checkbox" name="role" value="主催"> 主催</label>
-    <label><input type="checkbox" name="role" value="運営"> 運営</label>
-    <label><input type="checkbox" name="role" value="斎人"> 斎人</label>
-  </div>
+<label>CAST:</label>
+<input type="text" id="cast" maxlength="50">
+<select id="fontCast">
+  <option value="serif">Serif</option>
+  <option value="sans-serif">Sans-serif</option>
+  <option value="YorutegakiRegular">YorutegakiRegular</option>
+  <option value="YorutegakiLight">YorutegakiLight</option>
+  <option value="AnHina02">AnHina02</option>
+  <option value="msmincho.ttc">MS Mincho</option>
+</select>
 
-  <label>ひとこと（16文字以内）:</label>
-  <input type="text" id="comment1" maxlength="16">
-  <label>ひとことフォント:</label>
-  <select id="fontComment1">
-    <option value="serif">標準</option>
-    <option value="YorutegakiLight">YorutegakiLight</option>
-    <option value="YorutegakiRegular">YorutegakiRegular</option>
-    <option value="AnHina02">AnHina02</option>
-    <option value="AoyagiKozanT">AoyagiKozanT</option>
-    <option value="MSMincho">MSMincho</option>
-  </select>
+<label>役職（複数可）:</label>
+<div id="roleContainer">
+  <label><input type="checkbox" name="role" value="後見人"> 後見人</label>
+  <label><input type="checkbox" name="role" value="露店出店者"> 露店出店者</label>
+  <label><input type="checkbox" name="role" value="縁者"> 縁者</label>
+  <label><input type="checkbox" name="role" value="観客"> 観客</label>
+  <label><input type="checkbox" name="role" value="見学"> 見学</label>
+  <label><input type="checkbox" name="role" value="主催"> 主催</label>
+  <label><input type="checkbox" name="role" value="運営"> 運営</label>
+  <label><input type="checkbox" name="role" value="斎人"> 斎人</label>
+</div>
 
-  <label>自己紹介（120文字以内）:</label>
-  <textarea id="comment2" maxlength="120" rows="3"></textarea>
-  <label>自己紹介フォント:</label>
-  <select id="fontComment2">
-    <option value="serif">標準</option>
-    <option value="YorutegakiLight">YorutegakiLight</option>
-    <option value="YorutegakiRegular">YorutegakiRegular</option>
-    <option value="AnHina02">AnHina02</option>
-    <option value="AoyagiKozanT">AoyagiKozanT</option>
-    <option value="MSMincho">MSMincho</option>
-  </select>
+<label>ひとこと（16文字以内）:</label>
+<input type="text" id="comment1" maxlength="16">
+<select id="fontComment1">
+  <option value="serif">Serif</option>
+  <option value="YorutegakiRegular">YorutegakiRegular</option>
+</select>
 
-  <label>背景画像を選択:</label>
-  <select id="bgSelector">
-    <option value="none">--- 選択してください ---</option>
-    <option value="緑.png">緑</option>
-    <option value="青.png">青</option>
-    <option value="橙.png">橙</option>
-  </select>
+<label>自己紹介（40文字で自動改行、上限120文字）:</label>
+<textarea id="comment2" maxlength="120" rows="3"></textarea>
+<select id="fontComment2">
+  <option value="serif">Serif</option>
+  <option value="YorutegakiRegular">YorutegakiRegular</option>
+  <option value="YorutegakiLight">YorutegakiLight</option>
+</select>
 
-  <label>イラスト画像をアップロード（バストアップ700*800）:</label>
-  <input type="file" id="imageUpload" accept="image/*">
+<label>背景画像:</label>
+<select id="bgSelector">
+  <option value="none">--- 選択してください ---</option>
+  <option value="緑.png">緑</option>
+  <option value="青.png">青</option>
+  <option value="橙.png">橙</option>
+</select>
 
-  <button onclick="downloadImage()">画像を保存</button>
+<label>イラスト画像アップロード（バストアップ700*800）:</label>
+<input type="file" id="imageUpload" accept="image/*">
+
+<button onclick="downloadImage()">画像を保存</button>
 </div>
 
 <canvas id="cardCanvas" width="1400" height="933"></canvas>
@@ -141,96 +106,97 @@ let bgImage = null;
 
 template.onload = draw;
 
-document.querySelectorAll("#name, #cast, #comment1, #comment2").forEach(input => input.addEventListener("input", draw));
+["name","cast","comment1","comment2"].forEach(id => {
+  document.getElementById(id).addEventListener("input", draw);
+});
 document.querySelectorAll("input[name='role']").forEach(cb => cb.addEventListener("change", draw));
-document.querySelectorAll("#fontName,#fontCast,#fontComment1,#fontComment2").forEach(sel => sel.addEventListener("change", draw));
 
 document.getElementById("imageUpload").addEventListener("change", function(e){
   const reader = new FileReader();
   reader.onload = function(event){
     const img = new Image();
-    img.onload = ()=>{
-      const scale = Math.min(390/img.width, 480/img.height);
+    img.onload = () => {
+      const scale = Math.min(390/img.width,480/img.height);
       const w = img.width*scale;
       const h = img.height*scale;
       const offscreen = document.createElement("canvas");
-      offscreen.width = 390;
-      offscreen.height = 480;
+      offscreen.width = 390; offscreen.height = 480;
       const offCtx = offscreen.getContext("2d");
       offCtx.clearRect(0,0,390,480);
       offCtx.drawImage(img,(390-w)/2,(480-h)/2,w,h);
       charaImg = new Image();
       charaImg.onload = draw;
       charaImg.src = offscreen.toDataURL();
-    };
+    }
     img.src = event.target.result;
-  };
+  }
   reader.readAsDataURL(e.target.files[0]);
 });
 
 document.getElementById("bgSelector").addEventListener("change", function(){
   const bgPath = this.value;
-  if(bgPath==="none"){bgImage=null;draw();}
-  else{bgImage = new Image(); bgImage.onload=draw; bgImage.src=`images/${bgPath}`;}
+  if(bgPath==="none"){ bgImage=null; draw(); } 
+  else { bgImage=new Image(); bgImage.onload=draw; bgImage.src=`images/${bgPath}`; }
 });
 
 function draw(){
   ctx.clearRect(0,0,canvas.width,canvas.height);
   ctx.drawImage(template,0,0,canvas.width,canvas.height);
-
   if(bgImage) ctx.drawImage(bgImage,143,185,385,475);
   if(charaImg) ctx.drawImage(charaImg,140,180,390,497);
 
   // NAME
+  const nameText = document.getElementById("name").value;
   const nameFont = document.getElementById("fontName").value;
   ctx.font = `bold 48px ${nameFont}`;
-  ctx.fillStyle = "black";
-  ctx.textAlign = "left";
-  ctx.fillText(document.getElementById("name").value,710,250);
+  ctx.fillStyle="black";
+  ctx.textAlign="left";
+  drawAutoFitText(ctx,nameText,710,250,600,nameFont);
 
   // CAST
-  const castFont = document.getElementById("fontCast").value;
   const castText = document.getElementById("cast").value;
-  let castSize = 48; // デフォルト
-  if(castText.length > 15) castSize = 40;
-  if(castText.length > 25) castSize = 32;
-  ctx.font = `bold ${castSize}px ${castFont}`;
-  ctx.fillText(castText,710,390);
+  const castFont = document.getElementById("fontCast").value;
+  drawAutoFitText(ctx,castText,710,390,600,castFont);
 
-  // Roles
-  const rolePositionMap = {
-    "後見人": { x: 755, y: 450, w: 96, h: 34 },
-    "露店出店者": { x: 960, y: 450, w: 170, h: 34 },
-    "縁者": { x: 740, y: 500, w: 72, h: 34 },
-    "観客": { x: 955, y: 505, w: 72, h: 34 },
-    "見学": { x: 1125, y: 510, w: 72, h: 34 },
-    "主催": { x: 745, y: 550, w: 72, h: 34 },
-    "運営": { x: 950, y: 550, w: 72, h: 34 },
-    "斎人": { x: 1125, y: 550, w: 72, h: 34 },
-  };
+  // 役職
+  const rolePos = { "後見人":{x:755,y:450,w:96,h:34},"露店出店者":{x:960,y:450,w:170,h:34},
+                    "縁者":{x:740,y:500,w:72,h:34},"観客":{x:955,y:505,w:72,h:34},
+                    "見学":{x:1125,y:510,w:72,h:34},"主催":{x:745,y:550,w:72,h:34},
+                    "運営":{x:950,y:550,w:72,h:34},"斎人":{x:1125,y:550,w:72,h:34}};
   const selectedRoles = Array.from(document.querySelectorAll("input[name='role']:checked")).map(cb=>cb.value);
   ctx.fillStyle="rgba(255,127,127,0.6)";
-  selectedRoles.forEach(role=>{
-    const mark = rolePositionMap[role];
-    if(mark) ctx.fillRect(mark.x,mark.y,mark.w,mark.h);
-  });
+  selectedRoles.forEach(r=>{ const m=rolePos[r]; if(m) ctx.fillRect(m.x,m.y,m.w,m.h); });
 
   // ひとこと
-  const comment1Font = document.getElementById("fontComment1").value;
-  ctx.font = `bold 26px ${comment1Font}`;
-  ctx.fillStyle = "black";
-  ctx.fillText("「"+document.getElementById("comment1").value+"」",780,660);
+  const c1Text = document.getElementById("comment1").value;
+  const c1Font = document.getElementById("fontComment1").value;
+  ctx.font=`bold 26px ${c1Font}`;
+  ctx.fillStyle="black";
+  ctx.fillText("「"+c1Text+"」",780,660);
 
   // 自己紹介
-  const comment2Font = document.getElementById("fontComment2").value;
-  let comment2Size = comment2Font.includes("Yorutegaki") ? 70 : 30;
-  let lineHeight = comment2Font.includes("Yorutegaki") ? 40 : 30;
-  ctx.font = `${comment2Size}px ${comment2Font}`;
-  drawMultilineText(ctx, document.getElementById("comment2").value, 600,700,650,comment2Size,lineHeight);
+  const c2Text = document.getElementById("comment2").value;
+  const c2Font = document.getElementById("fontComment2").value;
+  ctx.font = `30px ${c2Font}`;
+  drawMultilineText(ctx,c2Text,600,700,650,26,40);
 }
 
-function drawMultilineText(ctx,text,x,y,maxWidth,fontSize,lineHeight){
-  const words = text.match(new RegExp(`.{1,40}`,'g')) || [];
+// 自動サイズ調整して描画
+function drawAutoFitText(ctx,text,x,y,maxWidth,font){
+  let fontSize=48;
+  const isYoru=/Yorutegaki/.test(font);
+  const factor=isYoru?1.2:1.0;
+  ctx.font=`bold ${fontSize}px ${font}`;
+  while(ctx.measureText(text).width*factor>maxWidth && fontSize>10){
+    fontSize--;
+    ctx.font=`bold ${fontSize}px ${font}`;
+  }
+  ctx.fillText(text,x,y);
+}
+
+// 自動改行
+function drawMultilineText(ctx,text,x,y,maxWidth,lineHeight,maxChars){
+  const words=text.match(new RegExp(`.{1,${maxChars}}`,"g"))||[];
   words.forEach((line,i)=>{
     ctx.fillText(line,x,y+i*lineHeight);
   });
@@ -243,12 +209,10 @@ function downloadImage(){
     link.href=canvas.toDataURL('image/png');
     link.click();
   }catch(e){
-    alert("保存できませんでした。ローカルで開いている場合はローカルサーバーを使ってください。");
+    alert("保存できませんでした。ローカルサーバーを使ってください");
     console.error(e);
   }
 }
 </script>
 </body>
 </html>
-
-
