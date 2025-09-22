@@ -20,7 +20,7 @@ canvas {
   flex-direction: column;
   gap: 12px;
   margin-top: 20px;
-  width: 800px; /* 横に広げる */
+  width: 800px;
 }
 .form-row {
   display: flex;
@@ -170,14 +170,49 @@ template.src = "サンプル2.png";
 let charaImg = null;
 let bgImage = null;
 
-template.onload = draw;
+// --- 入力項目リスト ---
+const fields = ["name","cast","comment1","comment2"];
+const fontFields = ["fontName","fontCast","fontComment1","fontComment2"];
+const sizeFields = ["sizeName","sizeCast","sizeComment1","sizeComment2"];
 
-["name","cast","comment1","comment2"].forEach(id => {
-  document.getElementById(id).addEventListener("input", draw);
+// --- 保存処理 ---
+function saveToStorage(){
+  fields.concat(fontFields).concat(sizeFields).forEach(id=>{
+    localStorage.setItem(id, document.getElementById(id).value);
+  });
+  localStorage.setItem("bgSelector", document.getElementById("bgSelector").value);
+}
+
+// --- 復元処理 ---
+function loadFromStorage(){
+  fields.concat(fontFields).concat(sizeFields).forEach(id=>{
+    if(localStorage.getItem(id)){
+      document.getElementById(id).value = localStorage.getItem(id);
+    }
+  });
+  if(localStorage.getItem("bgSelector")){
+    document.getElementById("bgSelector").value = localStorage.getItem("bgSelector");
+    if(document.getElementById("bgSelector").value !== "none"){
+      bgImage = new Image();
+      bgImage.onload = draw;
+      bgImage.src = `images/${document.getElementById("bgSelector").value}`;
+    }
+  }
+}
+
+template.onload = function(){
+  loadFromStorage();
+  draw();
+};
+
+// --- 入力即時反映 ---
+[...fields, ...fontFields, ...sizeFields].forEach(id=>{
+  document.getElementById(id).addEventListener("input", ()=>{ saveToStorage(); draw(); });
+  document.getElementById(id).addEventListener("change", ()=>{ saveToStorage(); draw(); });
 });
-document.querySelectorAll("select,input[type=number]").forEach(el => el.addEventListener("change", draw));
 
 document.getElementById("bgSelector").addEventListener("change", function(){
+  saveToStorage();
   if(this.value==="none"){ bgImage=null; draw(); }
   else { bgImage=new Image(); bgImage.onload=draw; bgImage.src=`images/${this.value}`; }
 });
@@ -203,40 +238,30 @@ function draw(){
 
   // NAME
   const nameText=document.getElementById("name").value;
-  const nameFont=document.getElementById("fontName").value;
-  const sizeName=document.getElementById("sizeName").value;
-  ctx.font=`bold ${sizeName}px "${nameFont}"`;
+  ctx.font=`bold ${document.getElementById("sizeName").value}px "${document.getElementById("fontName").value}"`;
   ctx.fillStyle="black";
   ctx.textAlign="left";
   ctx.fillText(nameText,710,250);
 
   // CAST
   const castText=document.getElementById("cast").value;
-  const castFont=document.getElementById("fontCast").value;
-  const sizeCast=document.getElementById("sizeCast").value;
-  ctx.font=`bold ${sizeCast}px "${castFont}"`;
-  ctx.fillText(castText,660,390); // ← 少し左寄せに変更
+  ctx.font=`bold ${document.getElementById("sizeCast").value}px "${document.getElementById("fontCast").value}"`;
+  ctx.fillText(castText,660,390);
 
   // ひとこと
   const c1=document.getElementById("comment1").value;
-  const f1=document.getElementById("fontComment1").value;
-  const sizeC1=document.getElementById("sizeComment1").value;
-  ctx.font=`bold ${sizeC1}px "${f1}"`;
+  ctx.font=`bold ${document.getElementById("sizeComment1").value}px "${document.getElementById("fontComment1").value}"`;
   ctx.fillText("「"+c1+"」",780,660);
 
   // 自己紹介（自動改行）
   const c2=document.getElementById("comment2").value;
-  const f2=document.getElementById("fontComment2").value;
-  const sizeC2=document.getElementById("sizeComment2").value;
-  ctx.font=`${sizeC2}px "${f2}"`;
+  ctx.font=`${document.getElementById("sizeComment2").value}px "${document.getElementById("fontComment2").value}"`;
   drawMultilineText(ctx,c2,600,700,650,32,40);
 }
 
 function drawMultilineText(ctx,text,x,y,maxWidth,lineHeight,maxChars){
   const lines=text.match(new RegExp(`.{1,${maxChars}}`,"g"))||[];
-  lines.forEach((line,i)=>{
-    ctx.fillText(line,x,y+i*lineHeight);
-  });
+  lines.forEach((line,i)=> ctx.fillText(line,x,y+i*lineHeight));
 }
 
 function downloadImage(){
@@ -248,4 +273,3 @@ function downloadImage(){
 </script>
 </body>
 </html>
-
