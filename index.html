@@ -1,233 +1,161 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<title>歳神巡幸祭カードジェネレーター</title>
-<style>
-@font-face {
-  font-family: 'YorutegakiRegular';
-  src: url('YorutegakiRegular.otf') format('opentype');
-}
-@font-face {
-  font-family: 'YorutegakiLight';
-  src: url('YorutegakiLight.otf') format('opentype');
-}
-@font-face {
-  font-family: 'AnHina02';
-  src: url('AnHina02.otf') format('opentype');
-}
-@font-face {
-  font-family: 'MSMincho';
-  src: url('msmincho.ttc') format('truetype-collection');
-}
-@font-face {
-  font-family: 'AoyagiKouzann';
-  src: url('青柳衡山フォントT.ttf') format('truetype');
-}
+  <meta charset="UTF-8">
+  <title>フォントテスト</title>
+  <style>
+    canvas {
+      border: 1px solid #ccc;
+    }
 
-body {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background: #f9f0e6;
-  font-family: "serif";
-}
-canvas {
-  border: 1px solid #ccc;
-  margin-top: 20px;
-}
-.form {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-top: 20px;
-  width: 300px;
-}
-label { font-weight: bold; }
-input[type="text"], select, textarea { width: 100%; }
-</style>
+    /* ===== フォント読み込み ===== */
+    @font-face {
+      font-family: 'AnHina02';
+      src: url('fonts/AnHina02.otf') format('opentype');
+    }
+    @font-face {
+      font-family: 'MSMincho';
+      src: url('fonts/MSMINCHO.TTC') format('truetype-collection');
+    }
+    @font-face {
+      font-family: 'YorutegakiBold';
+      src: url('fonts/YorutegakiBold.otf') format('opentype');
+    }
+    @font-face {
+      font-family: 'YorutegakiLight';
+      src: url('fonts/YorutegakiLight.otf') format('opentype');
+    }
+    @font-face {
+      font-family: 'YorutegakiRegular';
+      src: url('fonts/YorutegakiRegular.otf') format('opentype');
+    }
+    @font-face {
+      font-family: 'AoyagiKouzanT';
+      src: url('fonts/青柳衡山フォントT.ttf') format('truetype');
+    }
+  </style>
 </head>
 <body>
-<h2>歳神巡幸祭カードジェネレーター</h2>
-<div class="form">
+  <h3>フォントプレビュー</h3>
 
-<label>NAME:</label>
-<input type="text" id="name" maxlength="20">
-<select id="fontName">
-  <option value="serif">Serif</option>
-  <option value="sans-serif">Sans-serif</option>
-  <option value="YorutegakiRegular">YorutegakiRegular</option>
-  <option value="YorutegakiLight">YorutegakiLight</option>
-  <option value="AnHina02">AnHina02</option>
-  <option value="MSMincho">MS Mincho</option>
-  <option value="AoyagiKouzann">青柳衡山フォント</option>
-</select>
+  <!-- 自己紹介 -->
+  <fieldset>
+    <legend>自己紹介</legend>
+    <label>フォント:
+      <select class="fontSelector" data-target="intro">
+        <option value="AnHina02">AnHina02</option>
+        <option value="MSMincho">MS Mincho</option>
+        <option value="YorutegakiBold">Yorutegaki Bold</option>
+        <option value="YorutegakiLight">Yorutegaki Light</option>
+        <option value="YorutegakiRegular">Yorutegaki Regular</option>
+        <option value="AoyagiKouzanT">青柳衡山フォント</option>
+      </select>
+    </label>
+    <label>サイズ:
+      <input type="number" class="fontSize" data-target="intro" value="36"> px
+    </label>
+    <br>
+    <input type="text" id="introText" value="自己紹介テキスト">
+  </fieldset>
 
-<label>CAST:</label>
-<input type="text" id="cast" maxlength="50">
-<select id="fontCast">
-  <option value="serif">Serif</option>
-  <option value="sans-serif">Sans-serif</option>
-  <option value="YorutegakiRegular">YorutegakiRegular</option>
-  <option value="YorutegakiLight">YorutegakiLight</option>
-  <option value="AnHina02">AnHina02</option>
-  <option value="MSMincho">MS Mincho</option>
-  <option value="AoyagiKouzann">青柳衡山フォント</option>
-</select>
+  <!-- 名前 -->
+  <fieldset>
+    <legend>名前</legend>
+    <label>フォント:
+      <select class="fontSelector" data-target="name">
+        <option value="AnHina02">AnHina02</option>
+        <option value="MSMincho">MS Mincho</option>
+        <option value="YorutegakiBold">Yorutegaki Bold</option>
+        <option value="YorutegakiLight">Yorutegaki Light</option>
+        <option value="YorutegakiRegular">Yorutegaki Regular</option>
+        <option value="AoyagiKouzanT">青柳衡山フォント</option>
+      </select>
+    </label>
+    <label>サイズ:
+      <input type="number" class="fontSize" data-target="name" value="48"> px
+    </label>
+    <br>
+    <input type="text" id="nameText" value="名前テキスト">
+  </fieldset>
 
-<label>役職（複数可）:</label>
-<div id="roleContainer">
-  <label><input type="checkbox" name="role" value="後見人"> 後見人</label>
-  <label><input type="checkbox" name="role" value="露店出店者"> 露店出店者</label>
-  <label><input type="checkbox" name="role" value="縁者"> 縁者</label>
-  <label><input type="checkbox" name="role" value="観客"> 観客</label>
-  <label><input type="checkbox" name="role" value="見学"> 見学</label>
-  <label><input type="checkbox" name="role" value="主催"> 主催</label>
-  <label><input type="checkbox" name="role" value="運営"> 運営</label>
-  <label><input type="checkbox" name="role" value="斎人"> 斎人</label>
-</div>
+  <!-- CAST -->
+  <fieldset>
+    <legend>CAST</legend>
+    <label>フォント:
+      <select class="fontSelector" data-target="cast">
+        <option value="AnHina02">AnHina02</option>
+        <option value="MSMincho">MS Mincho</option>
+        <option value="YorutegakiBold">Yorutegaki Bold</option>
+        <option value="YorutegakiLight">Yorutegaki Light</option>
+        <option value="YorutegakiRegular">Yorutegaki Regular</option>
+        <option value="AoyagiKouzanT">青柳衡山フォント</option>
+      </select>
+    </label>
+    <label>サイズ:
+      <input type="number" class="fontSize" data-target="cast" value="32"> px
+    </label>
+    <br>
+    <input type="text" id="castText" value="CASTテキスト">
+  </fieldset>
 
-<label>ひとこと（16文字以内）:</label>
-<input type="text" id="comment1" maxlength="16">
-<select id="fontComment1">
-  <option value="serif">Serif</option>
-  <option value="YorutegakiRegular">YorutegakiRegular</option>
-  <option value="AoyagiKouzann">青柳衡山フォント</option>
-</select>
+  <br>
+  <canvas id="canvas" width="800" height="300"></canvas>
 
-<label>自己紹介（40文字で自動改行、上限120文字）:</label>
-<textarea id="comment2" maxlength="120" rows="3"></textarea>
-<select id="fontComment2">
-  <option value="serif">Serif</option>
-  <option value="YorutegakiRegular">YorutegakiRegular</option>
-  <option value="YorutegakiLight">YorutegakiLight</option>
-  <option value="AoyagiKouzann">青柳衡山フォント</option>
-</select>
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
 
-<label>背景画像:</label>
-<select id="bgSelector">
-  <option value="none">--- 選択してください ---</option>
-  <option value="緑.png">緑</option>
-  <option value="青.png">青</option>
-  <option value="橙.png">橙</option>
-</select>
+    // デフォルト設定
+    const state = {
+      intro: { font: "AnHina02", size: 36, text: "自己紹介テキスト" },
+      name: { font: "MSMincho", size: 48, text: "名前テキスト" },
+      cast: { font: "YorutegakiRegular", size: 32, text: "CASTテキスト" }
+    };
 
-<label>イラスト画像アップロード（バストアップ700*800）:</label>
-<input type="file" id="imageUpload" accept="image/*">
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      let y = 20;
 
-<button onclick="downloadImage()">画像を保存</button>
-</div>
-
-<canvas id="cardCanvas" width="1400" height="933"></canvas>
-
-<script>
-const canvas = document.getElementById("cardCanvas");
-const ctx = canvas.getContext("2d");
-const template = new Image();
-template.src = "サンプル2.png";
-
-let charaImg = null;
-let bgImage = null;
-
-template.onload = draw;
-
-["name","cast","comment1","comment2"].forEach(id => {
-  document.getElementById(id).addEventListener("input", draw);
-});
-document.querySelectorAll("input[name='role']").forEach(cb => cb.addEventListener("change", draw));
-
-document.getElementById("imageUpload").addEventListener("change", function(e){
-  const reader = new FileReader();
-  reader.onload = function(event){
-    const img = new Image();
-    img.onload = () => {
-      const scale = Math.min(390/img.width,480/img.height);
-      const w = img.width*scale;
-      const h = img.height*scale;
-      const offscreen = document.createElement("canvas");
-      offscreen.width = 390; offscreen.height = 480;
-      const offCtx = offscreen.getContext("2d");
-      offCtx.clearRect(0,0,390,480);
-      offCtx.drawImage(img,(390-w)/2,(480-h)/2,w,h);
-      charaImg = new Image();
-      charaImg.onload = draw;
-      charaImg.src = offscreen.toDataURL();
+      for (let key of ["intro", "name", "cast"]) {
+        ctx.font = `${state[key].size}px "${state[key].font}"`;
+        ctx.textBaseline = 'top';
+        ctx.fillStyle = '#000';
+        ctx.fillText(state[key].text, 20, y);
+        y += state[key].size + 20;
+      }
     }
-    img.src = event.target.result;
-  }
-  reader.readAsDataURL(e.target.files[0]);
-});
 
-document.getElementById("bgSelector").addEventListener("change", function(){
-  const bgPath = this.value;
-  if(bgPath==="none"){ bgImage=null; draw(); } 
-  else { bgImage=new Image(); bgImage.onload=draw; bgImage.src=`images/${bgPath}`; }
-});
+    // イベント設定
+    document.querySelectorAll('.fontSelector').forEach(sel => {
+      sel.addEventListener('change', e => {
+        const target = e.target.dataset.target;
+        state[target].font = e.target.value;
+        draw();
+      });
+    });
 
-function draw(){
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  ctx.drawImage(template,0,0,canvas.width,canvas.height);
-  if(bgImage) ctx.drawImage(bgImage,143,185,385,475);
-  if(charaImg) ctx.drawImage(charaImg,140,180,390,497);
+    document.querySelectorAll('.fontSize').forEach(input => {
+      input.addEventListener('input', e => {
+        const target = e.target.dataset.target;
+        state[target].size = parseInt(e.target.value) || 36;
+        draw();
+      });
+    });
 
-  // NAME
-  drawAutoFitText(ctx, document.getElementById("name").value,710,250,600,document.getElementById("fontName").value,48);
+    document.getElementById('introText').addEventListener('input', e => {
+      state.intro.text = e.target.value;
+      draw();
+    });
+    document.getElementById('nameText').addEventListener('input', e => {
+      state.name.text = e.target.value;
+      draw();
+    });
+    document.getElementById('castText').addEventListener('input', e => {
+      state.cast.text = e.target.value;
+      draw();
+    });
 
-  // CAST
-  drawAutoFitText(ctx, document.getElementById("cast").value,710,390,600,document.getElementById("fontCast").value,48);
-
-  // 役職
-  const rolePos = { "後見人":{x:755,y:450,w:96,h:34},"露店出店者":{x:960,y:450,w:170,h:34},
-                    "縁者":{x:740,y:500,w:72,h:34},"観客":{x:955,y:505,w:72,h:34},
-                    "見学":{x:1125,y:510,w:72,h:34},"主催":{x:745,y:550,w:72,h:34},
-                    "運営":{x:950,y:550,w:72,h:34},"斎人":{x:1125,y:550,w:72,h:34}};
-  const selectedRoles = Array.from(document.querySelectorAll("input[name='role']:checked")).map(cb=>cb.value);
-  ctx.fillStyle="rgba(255,127,127,0.6)";
-  selectedRoles.forEach(r=>{ const m=rolePos[r]; if(m) ctx.fillRect(m.x,m.y,m.w,m.h); });
-
-  // ひとこと
-  ctx.font=`bold 26px ${document.getElementById("fontComment1").value}`;
-  ctx.fillStyle="black";
-  ctx.fillText("「"+document.getElementById("comment1").value+"」",780,660);
-
-  // 自己紹介
-  ctx.font=`30px ${document.getElementById("fontComment2").value}`;
-  drawMultilineText(ctx, document.getElementById("comment2").value,600,700,650,30,40);
-}
-
-// 自動サイズ調整＆Yorutegaki/青柳縦位置調整
-function drawAutoFitText(ctx,text,x,y,maxWidth,font,baseSize){
-  let fontSize=baseSize;
-  const isYoruOrAoya=/Yorutegaki|AoyagiKouzann/.test(font);
-  ctx.font=`bold ${fontSize}px ${font}`;
-  while(ctx.measureText(text).width>maxWidth && fontSize>10){
-    fontSize--;
-    ctx.font=`bold ${fontSize}px ${font}`;
-  }
-  const yOffset = isYoruOrAoya ? fontSize*0.15 : 0;
-  ctx.fillStyle="black";
-  ctx.fillText(text,x,y+yOffset);
-}
-
-// 自動改行
-function drawMultilineText(ctx,text,x,y,maxWidth,lineHeight,maxChars){
-  const lines=text.match(new RegExp(`.{1,${maxChars}}`,"g"))||[];
-  lines.forEach((line,i)=>{
-    ctx.fillText(line,x,y+i*lineHeight);
-  });
-}
-
-function downloadImage(){
-  const link=document.createElement('a');
-  link.download='card.png';
-  try{
-    link.href=canvas.toDataURL('image/png');
-    link.click();
-  }catch(e){
-    alert("保存できませんでした。ローカルサーバーを使ってください");
-    console.error(e);
-  }
-}
-</script>
+    document.fonts.ready.then(draw);
+  </script>
 </body>
 </html>
