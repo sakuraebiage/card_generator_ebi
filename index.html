@@ -18,12 +18,29 @@ canvas {
 .form {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
   margin-top: 20px;
-  width: 300px;
+  width: 800px; /* 横に広げる */
 }
-label { font-weight: bold; }
-input[type="text"], select, textarea, input[type="number"] { width: 100%; }
+.form-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.form-row label {
+  width: 120px;
+  font-weight: bold;
+}
+.form-row input[type="text"],
+.form-row textarea {
+  flex: 1;
+}
+.form-row select {
+  flex: 0 0 180px;
+}
+.form-row input[type="number"] {
+  width: 60px;
+}
 
 /* ===== フォント読み込み ===== */
 @font-face {
@@ -57,71 +74,80 @@ input[type="text"], select, textarea, input[type="number"] { width: 100%; }
 <div class="form">
 
 <!-- NAME -->
-<label>NAME:</label>
-<input type="text" id="name" maxlength="20">
-<select id="fontName">
-  <option value="serif">Serif</option>
-  <option value="sans-serif">Sans-serif</option>
-  <option value="YorutegakiRegular">YorutegakiRegular</option>
-  <option value="YorutegakiLight">YorutegakiLight</option>
-  <option value="YorutegakiBold">YorutegakiBold</option>
-  <option value="AnHina02">AnHina02</option>
-  <option value="MSMincho">MS Mincho</option>
-  <option value="AoyagiKouzanT">青柳衡山フォント</option>
-</select>
-<label>サイズ:</label>
-<input type="number" id="fontSizeName" value="48">
+<div class="form-row">
+  <label>NAME:</label>
+  <input type="text" id="name" maxlength="20">
+  <select id="fontName">
+    <option value="serif">Serif</option>
+    <option value="sans-serif">Sans-serif</option>
+    <option value="YorutegakiRegular">YorutegakiRegular</option>
+    <option value="YorutegakiLight">YorutegakiLight</option>
+    <option value="YorutegakiBold">YorutegakiBold</option>
+    <option value="AnHina02">AnHina02</option>
+    <option value="MSMincho">MS Mincho</option>
+    <option value="AoyagiKouzanT">青柳衡山フォント</option>
+  </select>
+  <input type="number" id="sizeName" value="48">
+</div>
 
 <!-- CAST -->
-<label>CAST:</label>
-<input type="text" id="cast" maxlength="50">
-<select id="fontCast">
-  <option value="serif">Serif</option>
-  <option value="sans-serif">Sans-serif</option>
-  <option value="YorutegakiRegular">YorutegakiRegular</option>
-  <option value="YorutegakiLight">YorutegakiLight</option>
-  <option value="YorutegakiBold">YorutegakiBold</option>
-  <option value="AnHina02">AnHina02</option>
-  <option value="MSMincho">MS Mincho</option>
-  <option value="AoyagiKouzanT">青柳衡山フォント</option>
-</select>
-<label>サイズ:</label>
-<input type="number" id="fontSizeCast" value="36">
+<div class="form-row">
+  <label>CAST:</label>
+  <input type="text" id="cast" maxlength="50">
+  <select id="fontCast">
+    <option value="serif">Serif</option>
+    <option value="sans-serif">Sans-serif</option>
+    <option value="YorutegakiRegular">YorutegakiRegular</option>
+    <option value="YorutegakiLight">YorutegakiLight</option>
+    <option value="YorutegakiBold">YorutegakiBold</option>
+    <option value="AnHina02">AnHina02</option>
+    <option value="MSMincho">MS Mincho</option>
+    <option value="AoyagiKouzanT">青柳衡山フォント</option>
+  </select>
+  <input type="number" id="sizeCast" value="36">
+</div>
 
 <!-- ひとこと -->
-<label>ひとこと（16文字以内）:</label>
-<input type="text" id="comment1" maxlength="16">
-<select id="fontComment1">
-  <option value="serif">Serif</option>
-  <option value="YorutegakiRegular">YorutegakiRegular</option>
-  <option value="YorutegakiLight">YorutegakiLight</option>
-</select>
-<label>サイズ:</label>
-<input type="number" id="fontSizeComment1" value="26">
+<div class="form-row">
+  <label>ひとこと:</label>
+  <input type="text" id="comment1" maxlength="16">
+  <select id="fontComment1">
+    <option value="serif">Serif</option>
+    <option value="YorutegakiRegular">YorutegakiRegular</option>
+    <option value="YorutegakiLight">YorutegakiLight</option>
+  </select>
+  <input type="number" id="sizeComment1" value="26">
+</div>
 
 <!-- 自己紹介 -->
-<label>自己紹介（40文字で自動改行、上限120文字）:</label>
-<textarea id="comment2" maxlength="120" rows="3"></textarea>
-<select id="fontComment2">
-  <option value="serif">Serif</option>
-  <option value="YorutegakiRegular">YorutegakiRegular</option>
-  <option value="YorutegakiLight">YorutegakiLight</option>
-  <option value="AoyagiKouzanT">青柳衡山フォント</option>
-</select>
-<label>サイズ:</label>
-<input type="number" id="fontSizeComment2" value="28">
+<div class="form-row">
+  <label>自己紹介:</label>
+  <textarea id="comment2" maxlength="120" rows="2"></textarea>
+  <select id="fontComment2">
+    <option value="serif">Serif</option>
+    <option value="YorutegakiRegular">YorutegakiRegular</option>
+    <option value="YorutegakiLight">YorutegakiLight</option>
+    <option value="AoyagiKouzanT">青柳衡山フォント</option>
+  </select>
+  <input type="number" id="sizeComment2" value="28">
+</div>
 
-<!-- 背景 -->
-<label>背景画像:</label>
-<select id="bgSelector">
-  <option value="none">--- 選択してください ---</option>
-  <option value="緑.png">緑</option>
-  <option value="青.png">青</option>
-  <option value="橙.png">橙</option>
-</select>
+<!-- 背景画像 -->
+<div class="form-row">
+  <label>背景画像:</label>
+  <select id="bgSelector">
+    <option value="none">--- 選択してください ---</option>
+    <option value="緑.png">緑</option>
+    <option value="青.png">青</option>
+    <option value="橙.png">橙</option>
+  </select>
+</div>
 
-<label>イラスト画像アップロード:</label>
-<input type="file" id="imageUpload" accept="image/*">
+<!-- イラストアップロード -->
+<div class="form-row">
+  <label>イラスト:</label>
+  <input type="file" id="imageUpload" accept="image/*">
+</div>
 
 <button onclick="downloadImage()">画像を保存</button>
 </div>
@@ -142,7 +168,7 @@ template.onload = draw;
 ["name","cast","comment1","comment2"].forEach(id => {
   document.getElementById(id).addEventListener("input", draw);
 });
-document.querySelectorAll("select,input[type=number]").forEach(sel => sel.addEventListener("change", draw));
+document.querySelectorAll("select,input[type=number]").forEach(el => el.addEventListener("change", draw));
 
 document.getElementById("bgSelector").addEventListener("change", function(){
   if(this.value==="none"){ bgImage=null; draw(); }
@@ -151,14 +177,15 @@ document.getElementById("bgSelector").addEventListener("change", function(){
 
 document.getElementById("imageUpload").addEventListener("change", function(e){
   const file=e.target.files[0];
-  if(!file) return;
-  const reader=new FileReader();
-  reader.onload=function(ev){
-    charaImg=new Image();
-    charaImg.onload=draw;
-    charaImg.src=ev.target.result;
-  };
-  reader.readAsDataURL(file);
+  if(file){
+    const reader=new FileReader();
+    reader.onload=function(evt){
+      charaImg=new Image();
+      charaImg.onload=draw;
+      charaImg.src=evt.target.result;
+    }
+    reader.readAsDataURL(file);
+  }
 });
 
 function draw(){
@@ -170,8 +197,8 @@ function draw(){
   // NAME
   const nameText=document.getElementById("name").value;
   const nameFont=document.getElementById("fontName").value;
-  const nameSize=document.getElementById("fontSizeName").value;
-  ctx.font=`bold ${nameSize}px "${nameFont}"`;
+  const sizeName=document.getElementById("sizeName").value;
+  ctx.font=`bold ${sizeName}px "${nameFont}"`;
   ctx.fillStyle="black";
   ctx.textAlign="left";
   ctx.fillText(nameText,710,250);
@@ -179,28 +206,30 @@ function draw(){
   // CAST
   const castText=document.getElementById("cast").value;
   const castFont=document.getElementById("fontCast").value;
-  const castSize=document.getElementById("fontSizeCast").value;
-  ctx.font=`bold ${castSize}px "${castFont}"`;
-  ctx.fillText(castText,710,390);
+  const sizeCast=document.getElementById("sizeCast").value;
+  ctx.font=`bold ${sizeCast}px "${castFont}"`;
+  ctx.fillText(castText,660,390); // ← 少し左寄せに変更
 
   // ひとこと
   const c1=document.getElementById("comment1").value;
   const f1=document.getElementById("fontComment1").value;
-  const s1=document.getElementById("fontSizeComment1").value;
-  ctx.font=`bold ${s1}px "${f1}"`;
+  const sizeC1=document.getElementById("sizeComment1").value;
+  ctx.font=`bold ${sizeC1}px "${f1}"`;
   ctx.fillText("「"+c1+"」",780,660);
 
-  // 自己紹介（40字で自動改行）
+  // 自己紹介（自動改行）
   const c2=document.getElementById("comment2").value;
   const f2=document.getElementById("fontComment2").value;
-  const s2=document.getElementById("fontSizeComment2").value;
-  ctx.font=`${s2}px "${f2}"`;
-  drawMultilineText(ctx,c2,600,700,650,parseInt(s2)+4,40);
+  const sizeC2=document.getElementById("sizeComment2").value;
+  ctx.font=`${sizeC2}px "${f2}"`;
+  drawMultilineText(ctx,c2,600,700,650,32,40);
 }
 
 function drawMultilineText(ctx,text,x,y,maxWidth,lineHeight,maxChars){
   const lines=text.match(new RegExp(`.{1,${maxChars}}`,"g"))||[];
-  lines.forEach((line,i)=> ctx.fillText(line,x,y+i*lineHeight));
+  lines.forEach((line,i)=>{
+    ctx.fillText(line,x,y+i*lineHeight);
+  });
 }
 
 function downloadImage(){
