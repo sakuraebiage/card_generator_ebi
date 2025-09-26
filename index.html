@@ -174,33 +174,29 @@ canvas {
 <canvas id="cardCanvas" width="1400" height="933"></canvas>
 
 <script>
+// ==== Canvas & 画像 ====
 const canvas = document.getElementById("cardCanvas");
 const ctx = canvas.getContext("2d");
 const template = new Image();
 template.src = "サンプル2.png";
-
 let charaImg = null;
 let bgImage = null;
 
-// --- 入力項目リスト ---
+// 入力項目リスト
 const fields = ["name","cast","comment1","comment2"];
 const fontFields = ["fontName","fontCast","fontComment1","fontComment2"];
 const sizeFields = ["sizeName","sizeCast","sizeComment1","sizeComment2"];
 
-// --- 保存処理 ---
+// 保存/復元
 function saveToStorage(){
   fields.concat(fontFields).concat(sizeFields).forEach(id=>{
     localStorage.setItem(id, document.getElementById(id).value);
   });
   localStorage.setItem("bgSelector", document.getElementById("bgSelector").value);
 }
-
-// --- 復元処理 ---
 function loadFromStorage(){
   fields.concat(fontFields).concat(sizeFields).forEach(id=>{
-    if(localStorage.getItem(id)){
-      document.getElementById(id).value = localStorage.getItem(id);
-    }
+    if(localStorage.getItem(id)) document.getElementById(id).value = localStorage.getItem(id);
   });
   if(localStorage.getItem("bgSelector")){
     document.getElementById("bgSelector").value = localStorage.getItem("bgSelector");
@@ -211,24 +207,30 @@ function loadFromStorage(){
     }
   }
 }
+template.onload = function(){ loadFromStorage(); draw(); };
 
-template.onload = function(){
-  loadFromStorage();
-  draw();
-};
-
-// --- 入力即時反映 ---
+// 入力即時反映（文字系）
 [...fields, ...fontFields, ...sizeFields].forEach(id=>{
   document.getElementById(id).addEventListener("input", ()=>{ saveToStorage(); draw(); });
   document.getElementById(id).addEventListener("change", ()=>{ saveToStorage(); draw(); });
 });
 
+// 背景
 document.getElementById("bgSelector").addEventListener("change", function(){
   saveToStorage();
   if(this.value==="none"){ bgImage=null; draw(); }
   else { bgImage=new Image(); bgImage.onload=draw; bgImage.src=`images/${this.value}`; }
 });
 
+// 役職チェックボックスは変更時のみ
+document.querySelectorAll("input[name='role']").forEach(cb=>{
+  cb.addEventListener("change", ()=>{
+    saveToStorage();
+    draw();
+  });
+});
+
+// イラスト
 document.getElementById("imageUpload").addEventListener("change", function(e){
   const file=e.target.files[0];
   if(file){
@@ -242,6 +244,7 @@ document.getElementById("imageUpload").addEventListener("change", function(e){
   }
 });
 
+// ==== 描画 ====
 function draw(){
   ctx.clearRect(0,0,canvas.width,canvas.height);
   ctx.drawImage(template,0,0,canvas.width,canvas.height);
@@ -260,7 +263,7 @@ function draw(){
   ctx.font=`bold ${document.getElementById("sizeCast").value}px "${document.getElementById("fontCast").value}"`;
   ctx.fillText(castText,660,390);
 
-  // === 役職マーカー ===
+  // 役職マーカー
   const rolePositionMap = {
     "後見人": { x: 755, y: 450 },
     "露店出店者": { x: 960, y: 450 },
@@ -271,36 +274,38 @@ function draw(){
     "運営": { x: 950, y: 550 },
     "斎人": { x: 1125, y: 550 },
   };
-
+  const markerWidth = 100;
+  const markerHeight = 36;
   const selectedRoles = Array.from(document.querySelectorAll("input[name='role']:checked"))
     .map(cb => cb.value);
-
-  selectedRoles.forEach(role => {
+  selectedRoles.forEach(role=>{
     const pos = rolePositionMap[role];
-    if (pos) {
-      const markerWidth = 120;
-      const markerHeight = 36;
-      ctx.fillStyle = "rgba(255,20,147,0.5)"; // 濃いめピンク
-      ctx.fillRect(pos.x - 5, pos.y - 28, markerWidth, markerHeight);
+    if(pos){
+      ctx.fillStyle = "rgba(255,105,180,0.6)"; // 濃めピンク
+      ctx.fillRect(pos.x-5,pos.y-28,markerWidth,markerHeight);
     }
   });
 
   // ひとこと
   const c1=document.getElementById("comment1").value;
   ctx.font=`bold ${document.getElementById("sizeComment1").value}px "${document.getElementById("fontComment1").value}"`;
+  ctx.fillStyle="black";
   ctx.fillText("「"+c1+"」",780,660);
 
   // 自己紹介（自動改行）
   const c2=document.getElementById("comment2").value;
   ctx.font=`${document.getElementById("sizeComment2").value}px "${document.getElementById("fontComment2").value}"`;
+  ctx.fillStyle="black";
   drawMultilineText(ctx,c2,600,700,650,32,40);
 }
 
+// 自動改行描画
 function drawMultilineText(ctx,text,x,y,maxWidth,lineHeight,maxChars){
   const lines=text.match(new RegExp(`.{1,${maxChars}}`,"g"))||[];
   lines.forEach((line,i)=> ctx.fillText(line,x,y+i*lineHeight));
 }
 
+// 画像保存
 function downloadImage(){
   const link=document.createElement('a');
   link.download='card.png';
@@ -310,5 +315,3 @@ function downloadImage(){
 </script>
 </body>
 </html>
-
-
