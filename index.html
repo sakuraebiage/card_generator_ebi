@@ -43,30 +43,12 @@ canvas {
 }
 
 /* ===== フォント読み込み ===== */
-@font-face {
-  font-family: 'AnHina02';
-  src: url('fonts/AnHina02.otf') format('opentype');
-}
-@font-face {
-  font-family: 'MSMincho';
-  src: url('fonts/MSMINCHO.TTC') format('truetype-collection');
-}
-@font-face {
-  font-family: 'YorutegakiBold';
-  src: url('fonts/YorutegakiBold.otf') format('opentype');
-}
-@font-face {
-  font-family: 'YorutegakiLight';
-  src: url('fonts/YorutegakiLight.otf') format('opentype');
-}
-@font-face {
-  font-family: 'YorutegakiRegular';
-  src: url('fonts/YorutegakiRegular.otf') format('opentype');
-}
-@font-face {
-  font-family: 'AoyagiKouzanT';
-  src: url('fonts/青柳衡山フォントT.ttf') format('truetype');
-}
+@font-face { font-family: 'AnHina02'; src: url('fonts/AnHina02.otf') format('opentype'); }
+@font-face { font-family: 'MSMincho'; src: url('fonts/MSMINCHO.TTC') format('truetype-collection'); }
+@font-face { font-family: 'YorutegakiBold'; src: url('fonts/YorutegakiBold.otf') format('opentype'); }
+@font-face { font-family: 'YorutegakiLight'; src: url('fonts/YorutegakiLight.otf') format('opentype'); }
+@font-face { font-family: 'YorutegakiRegular'; src: url('fonts/YorutegakiRegular.otf') format('opentype'); }
+@font-face { font-family: 'AoyagiKouzanT'; src: url('fonts/青柳衡山フォントT.ttf') format('truetype'); }
 </style>
 </head>
 <body>
@@ -174,7 +156,6 @@ canvas {
 <canvas id="cardCanvas" width="1400" height="933"></canvas>
 
 <script>
-// ==== Canvas & 画像 ====
 const canvas = document.getElementById("cardCanvas");
 const ctx = canvas.getContext("2d");
 const template = new Image();
@@ -182,7 +163,7 @@ template.src = "サンプル2.png";
 let charaImg = null;
 let bgImage = null;
 
-// 入力項目リスト
+// 入力項目
 const fields = ["name","cast","comment1","comment2"];
 const fontFields = ["fontName","fontCast","fontComment1","fontComment2"];
 const sizeFields = ["sizeName","sizeCast","sizeComment1","sizeComment2"];
@@ -193,6 +174,10 @@ function saveToStorage(){
     localStorage.setItem(id, document.getElementById(id).value);
   });
   localStorage.setItem("bgSelector", document.getElementById("bgSelector").value);
+  // 役職チェック保存
+  const selectedRoles = Array.from(document.querySelectorAll("input[name='role']:checked"))
+    .map(cb=>cb.value);
+  localStorage.setItem("selectedRoles", JSON.stringify(selectedRoles));
 }
 function loadFromStorage(){
   fields.concat(fontFields).concat(sizeFields).forEach(id=>{
@@ -200,29 +185,35 @@ function loadFromStorage(){
   });
   if(localStorage.getItem("bgSelector")){
     document.getElementById("bgSelector").value = localStorage.getItem("bgSelector");
-    if(document.getElementById("bgSelector").value !== "none"){
+    if(document.getElementById("bgSelector").value!=="none"){
       bgImage = new Image();
-      bgImage.onload = draw;
-      bgImage.src = `images/${document.getElementById("bgSelector").value}`;
+      bgImage.onload=draw;
+      bgImage.src=`images/${document.getElementById("bgSelector").value}`;
     }
   }
+  // 役職チェック復元
+  const savedRoles = JSON.parse(localStorage.getItem("selectedRoles") || "[]");
+  document.querySelectorAll("input[name='role']").forEach(cb=>{
+    cb.checked = savedRoles.includes(cb.value);
+  });
 }
-template.onload = function(){ loadFromStorage(); draw(); };
 
-// 入力即時反映（文字系）
-[...fields, ...fontFields, ...sizeFields].forEach(id=>{
+template.onload=function(){ loadFromStorage(); draw(); };
+
+// 入力即時反映
+[...fields,...fontFields,...sizeFields].forEach(id=>{
   document.getElementById(id).addEventListener("input", ()=>{ saveToStorage(); draw(); });
   document.getElementById(id).addEventListener("change", ()=>{ saveToStorage(); draw(); });
 });
 
-// 背景
+// 背景選択
 document.getElementById("bgSelector").addEventListener("change", function(){
   saveToStorage();
   if(this.value==="none"){ bgImage=null; draw(); }
   else { bgImage=new Image(); bgImage.onload=draw; bgImage.src=`images/${this.value}`; }
 });
 
-// 役職チェックボックスは変更時のみ
+// 役職チェック変更時
 document.querySelectorAll("input[name='role']").forEach(cb=>{
   cb.addEventListener("change", ()=>{
     saveToStorage();
@@ -230,11 +221,11 @@ document.querySelectorAll("input[name='role']").forEach(cb=>{
   });
 });
 
-// イラスト
+// イラストアップロード
 document.getElementById("imageUpload").addEventListener("change", function(e){
-  const file=e.target.files[0];
+  const file = e.target.files[0];
   if(file){
-    const reader=new FileReader();
+    const reader = new FileReader();
     reader.onload=function(evt){
       charaImg=new Image();
       charaImg.onload=draw;
@@ -244,7 +235,7 @@ document.getElementById("imageUpload").addEventListener("change", function(e){
   }
 });
 
-// ==== 描画 ====
+// 描画
 function draw(){
   ctx.clearRect(0,0,canvas.width,canvas.height);
   ctx.drawImage(template,0,0,canvas.width,canvas.height);
@@ -263,26 +254,25 @@ function draw(){
   ctx.font=`bold ${document.getElementById("sizeCast").value}px "${document.getElementById("fontCast").value}"`;
   ctx.fillText(castText,660,390);
 
-  // 役職マーカー
-  const rolePositionMap = {
-    "後見人": { x: 755, y: 450 },
-    "露店出店者": { x: 960, y: 450 },
-    "縁者": { x: 740, y: 500 },
-    "観客": { x: 955, y: 505 },
-    "見学": { x: 1125, y: 510 },
-    "主催": { x: 745, y: 550 },
-    "運営": { x: 950, y: 550 },
-    "斎人": { x: 1125, y: 550 },
+  // 役職マーカー（文字幅に合わせて描画）
+  const rolePositionMap={
+    "後見人": { x:755, y:450 },
+    "露店出店者": { x:960, y:450 },
+    "縁者": { x:740, y:500 },
+    "観客": { x:955, y:505 },
+    "見学": { x:1125, y:510 },
+    "主催": { x:745, y:550 },
+    "運営": { x:950, y:550 },
+    "斎人": { x:1125, y:550 },
   };
-  const markerWidth = 100;
-  const markerHeight = 36;
-  const selectedRoles = Array.from(document.querySelectorAll("input[name='role']:checked"))
-    .map(cb => cb.value);
+  const selectedRoles = Array.from(document.querySelectorAll("input[name='role']:checked")).map(cb=>cb.value);
+  ctx.font="bold 28px serif"; // 幅測定用
   selectedRoles.forEach(role=>{
     const pos = rolePositionMap[role];
     if(pos){
-      ctx.fillStyle = "rgba(255,105,180,0.6)"; // 濃めピンク
-      ctx.fillRect(pos.x-5,pos.y-28,markerWidth,markerHeight);
+      const textWidth = ctx.measureText(role).width;
+      ctx.fillStyle="rgba(255,105,180,0.6)";
+      ctx.fillRect(pos.x-5,pos.y-28,textWidth+10,36);
     }
   });
 
@@ -292,7 +282,7 @@ function draw(){
   ctx.fillStyle="black";
   ctx.fillText("「"+c1+"」",780,660);
 
-  // 自己紹介（自動改行）
+  // 自己紹介
   const c2=document.getElementById("comment2").value;
   ctx.font=`${document.getElementById("sizeComment2").value}px "${document.getElementById("fontComment2").value}"`;
   ctx.fillStyle="black";
