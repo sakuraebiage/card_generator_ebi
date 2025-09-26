@@ -275,7 +275,7 @@ selectedRoles.forEach(role => {
     const textWidth = ctx.measureText(role).width;
     const markerHeight = 36; // 高さは統一
     const markerWidth = textWidth + 10; // 文字幅に合わせる
-    ctx.fillStyle = "rgba(255,105,180,0.6)"; // 濃いめピンク
+    ctx.fillStyle = "rgba(255,105,180,0.8)"; // 濃いめピンク
     ctx.fillRect(pos.x - 5, pos.y + pos.offsetY, markerWidth, markerHeight);
   }
 });
@@ -310,6 +310,7 @@ function downloadImage(){
 </script>
 </body>
 </html>
+
 
 
 
