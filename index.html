@@ -271,7 +271,7 @@ function draw(){
     const pos = rolePositionMap[role];
     if(pos){
       const textWidth = ctx.measureText(role).width;
-      ctx.fillStyle="rgba(255,105,180,0.4)";
+      ctx.fillStyle="rgba(255,105,180,0.2)";
       ctx.fillRect(pos.x-5,pos.y-28,textWidth+10,36);
     }
   });
@@ -305,6 +305,7 @@ function downloadImage(){
 </script>
 </body>
 </html>
+
 
 
 
