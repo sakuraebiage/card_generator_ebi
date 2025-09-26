@@ -182,10 +182,12 @@ template.src = "サンプル2.png";
 let charaImg = null;
 let bgImage = null;
 
+// --- 入力項目リスト ---
 const fields = ["name","cast","comment1","comment2"];
 const fontFields = ["fontName","fontCast","fontComment1","fontComment2"];
 const sizeFields = ["sizeName","sizeCast","sizeComment1","sizeComment2"];
 
+// --- 保存処理 ---
 function saveToStorage(){
   fields.concat(fontFields).concat(sizeFields).forEach(id=>{
     localStorage.setItem(id, document.getElementById(id).value);
@@ -193,6 +195,7 @@ function saveToStorage(){
   localStorage.setItem("bgSelector", document.getElementById("bgSelector").value);
 }
 
+// --- 復元処理 ---
 function loadFromStorage(){
   fields.concat(fontFields).concat(sizeFields).forEach(id=>{
     if(localStorage.getItem(id)){
@@ -214,6 +217,7 @@ template.onload = function(){
   draw();
 };
 
+// --- 入力即時反映 ---
 [...fields, ...fontFields, ...sizeFields].forEach(id=>{
   document.getElementById(id).addEventListener("input", ()=>{ saveToStorage(); draw(); });
   document.getElementById(id).addEventListener("change", ()=>{ saveToStorage(); draw(); });
@@ -256,7 +260,7 @@ function draw(){
   ctx.font=`bold ${document.getElementById("sizeCast").value}px "${document.getElementById("fontCast").value}"`;
   ctx.fillText(castText,660,390);
 
-  // ===== 修正版：役職マーカー＆文字描画 =====
+  // === 役職マーカー ===
   const rolePositionMap = {
     "後見人": { x: 755, y: 450 },
     "露店出店者": { x: 960, y: 450 },
@@ -271,17 +275,13 @@ function draw(){
   const selectedRoles = Array.from(document.querySelectorAll("input[name='role']:checked"))
     .map(cb => cb.value);
 
-  ctx.font = "bold 28px serif";
-  ctx.textAlign = "left";
-
   selectedRoles.forEach(role => {
     const pos = rolePositionMap[role];
     if (pos) {
-      const textWidth = ctx.measureText(role).width;
-      ctx.fillStyle = "rgba(255,182,193,0.5)";
-      ctx.fillRect(pos.x - 5, pos.y - 24, textWidth + 10, 30);
-      ctx.fillStyle = "black";
-      ctx.fillText(role, pos.x, pos.y);
+      const markerWidth = 120;
+      const markerHeight = 36;
+      ctx.fillStyle = "rgba(255,20,147,0.6)"; // 濃いめピンク
+      ctx.fillRect(pos.x - 5, pos.y - 28, markerWidth, markerHeight);
     }
   });
 
