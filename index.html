@@ -105,20 +105,19 @@ canvas {
     <option value="AoyagiKouzanT">青柳衡山フォント</option>
   </select>
   <input type="number" id="sizeCast" value="36">
-  
-</div>
-  <label>役職を選択（複数選択可）:</label>
-    <div id="roleContainer">
-   <label><input type="checkbox" name="role" value="後見人"> 後見人</label>
-    <label><input type="checkbox" name="role" value="露店出店者"> 露店出店者</label>
-    <label><input type="checkbox" name="role" value="縁者"> 縁者</label>
-    <label><input type="checkbox" name="role" value="観客"> 観客</label>
-    <label><input type="checkbox" name="role" value="見学"> 見学</label>
-    <label><input type="checkbox" name="role" value="主催"> 主催</label>
-    <label><input type="checkbox" name="role" value="運営"> 運営</label>
-    <label><input type="checkbox" name="role" value="斎人"> 斎人</label>
 </div>
 
+<label>役職を選択（複数選択可）:</label>
+<div id="roleContainer">
+  <label><input type="checkbox" name="role" value="後見人"> 後見人</label>
+  <label><input type="checkbox" name="role" value="露店出店者"> 露店出店者</label>
+  <label><input type="checkbox" name="role" value="縁者"> 縁者</label>
+  <label><input type="checkbox" name="role" value="観客"> 観客</label>
+  <label><input type="checkbox" name="role" value="見学"> 見学</label>
+  <label><input type="checkbox" name="role" value="主催"> 主催</label>
+  <label><input type="checkbox" name="role" value="運営"> 運営</label>
+  <label><input type="checkbox" name="role" value="斎人"> 斎人</label>
+</div>
 
 <!-- ひとこと -->
 <div class="form-row">
@@ -261,6 +260,33 @@ function draw(){
   ctx.font=`bold ${document.getElementById("sizeCast").value}px "${document.getElementById("fontCast").value}"`;
   ctx.fillText(castText,660,390);
 
+  // 役職マーカー
+  const rolePositionMap = {
+    "後見人": { x: 755, y: 450 },
+    "露店出店者": { x: 960, y: 450 },
+    "縁者": { x: 740, y: 500 },
+    "観客": { x: 955, y: 505 },
+    "見学": { x: 1125, y: 510 },
+    "主催": { x: 745, y: 550 },
+    "運営": { x: 950, y: 550 },
+    "斎人": { x: 1125, y: 550 },
+  };
+  const selectedRoles = Array.from(document.querySelectorAll("input[name='role']:checked")).map(cb => cb.value);
+
+  ctx.font = "bold 28px serif";
+  ctx.textAlign="left";
+  selectedRoles.forEach(role=>{
+    const pos = rolePositionMap[role];
+    if(pos){
+      const textWidth = ctx.measureText(role).width;
+      ctx.fillStyle = "rgba(255,182,193,0.5)"; // ピンク透過マーカー
+      ctx.fillRect(pos.x-5,pos.y-24,textWidth+10,30);
+
+      ctx.fillStyle="black";
+      ctx.fillText(role,pos.x,pos.y);
+    }
+  });
+
   // ひとこと
   const c1=document.getElementById("comment1").value;
   ctx.font=`bold ${document.getElementById("sizeComment1").value}px "${document.getElementById("fontComment1").value}"`;
@@ -276,31 +302,6 @@ function drawMultilineText(ctx,text,x,y,maxWidth,lineHeight,maxChars){
   const lines=text.match(new RegExp(`.{1,${maxChars}}`,"g"))||[];
   lines.forEach((line,i)=> ctx.fillText(line,x,y+i*lineHeight));
 }
-  function draw() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.drawImage(template, 0, 0, canvas.width, canvas.height);
-
-      if (bgImage) ctx.drawImage(bgImage, 143, 185, 385, 475);
-      if (charaImg) ctx.drawImage(charaImg, 140, 180, 390, 497);
-
-      ctx.font = "bold 48px serif";
-      ctx.fillStyle = "black";
-      ctx.textAlign = "left";
-      ctx.fillText(document.getElementById("name").value, 710, 250);
-      ctx.fillText(document.getElementById("cast").value, 710, 390);
-
-      const rolePositionMap = {
-        "後見人": { x: 755, y: 450, w: 96, h: 34 },
-        "露店出店者": { x: 960, y: 450, w: 170, h: 34 },
-        "縁者": { x: 740, y: 500, w: 72, h: 34 },
-        "観客": { x: 955, y: 505, w: 72, h: 34 },
-        "見学": { x: 1125, y: 510, w: 72, h: 34 },
-        "主催": { x: 745, y: 550, w: 72, h: 34 },
-        "運営": { x: 950, y: 550, w: 72, h: 34 },
-        "斎人": { x: 1125, y: 550, w: 72, h: 34 },
-      };
-      const selectedRoles = Array.from(document.querySelectorAll("input[name='role']:checked"))
-                                .map(cb => cb.value);
 
 function downloadImage(){
   const link=document.createElement('a');
@@ -311,4 +312,3 @@ function downloadImage(){
 </script>
 </body>
 </html>
-
