@@ -258,12 +258,12 @@ function draw(){
 const rolePositionMap = {
   "後見人":       { x: 755, y: 480, offsetY: -28 },
   "露店出店者":   { x: 960, y: 480, offsetY: -28 },
-  "縁者":         { x: 745, y: 520, offsetY: -30 },
+  "縁者":         { x: 745, y: 520, offsetY: -33 },
   "観客":         { x: 955, y: 520, offsetY: -28 },
   "見学":         { x: 1125, y: 520, offsetY: -28 },
-  "主催":         { x: 745, y: 580, offsetY: -26 },
-  "運営":         { x: 950, y: 580, offsetY: -26 },
-  "斎人":         { x: 1125, y: 580, offsetY: -26 },
+  "主催":         { x: 745, y: 580, offsetY: -23 },
+  "運営":         { x: 950, y: 580, offsetY: -23 },
+  "斎人":         { x: 1125, y: 580, offsetY: -23 },
 };
 
 const selectedRoles = Array.from(document.querySelectorAll("input[name='role']:checked")).map(cb => cb.value);
@@ -310,6 +310,7 @@ function downloadImage(){
 </script>
 </body>
 </html>
+
 
 
 
