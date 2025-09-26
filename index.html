@@ -261,9 +261,9 @@ const rolePositionMap = {
   "縁者":         { x: 747, y: 520, offsetY: -28 },
   "観客":         { x: 957, y: 520, offsetY: -28 },
   "見学":         { x: 1127, y: 520, offsetY: -28 },
-  "主催":         { x: 747, y: 580, offsetY: -25 },
-  "運営":         { x: 952, y: 580, offsetY: -25 },
-  "斎人":         { x: 1127, y: 580, offsetY: -25 },
+  "主催":         { x: 747, y: 580, offsetY: -27 },
+  "運営":         { x: 952, y: 580, offsetY: -27 },
+  "斎人":         { x: 1127, y: 580, offsetY: -27 },
 };
 
 const selectedRoles = Array.from(document.querySelectorAll("input[name='role']:checked")).map(cb => cb.value);
@@ -275,7 +275,7 @@ selectedRoles.forEach(role => {
     const textWidth = ctx.measureText(role).width;
     const markerHeight = 36; // 高さは統一
     const markerWidth = textWidth + 10; // 文字幅に合わせる
-    ctx.fillStyle = "rgba(255,105,180,0.65)"; // 濃いめピンク
+    ctx.fillStyle = "rgba(255,105,180,0.5)"; // 濃いめピンク
     ctx.fillRect(pos.x - 5, pos.y + pos.offsetY, markerWidth, markerHeight);
   }
 });
@@ -310,21 +310,5 @@ function downloadImage(){
 </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
