@@ -271,18 +271,6 @@ function draw(){
     "運営": { x: 950, y: 550 },
     "斎人": { x: 1125, y: 550 },
   };
-  
-  // 役職マーカー位置（テキスト基準のx,y）
-const rolePositionMap = {
-  "後見人": { x: 755, y: 450 },
-  "露店出店者": { x: 960, y: 450 },
-  "縁者": { x: 740, y: 500 },
-  "観客": { x: 955, y: 505 },
-  "見学": { x: 1125, y: 510 },
-  "主催": { x: 745, y: 550 },
-  "運営": { x: 950, y: 550 },
-  "斎人": { x: 1125, y: 550 },
-};
 
 // 固定マーカーサイズ
 const markerWidth = 100;
@@ -292,20 +280,13 @@ const markerHeight = 36;
 const selectedRoles = Array.from(document.querySelectorAll("input[name='role']:checked"))
   .map(cb => cb.value);
 
-ctx.font = "bold 32px serif"; // 役職のフォント
-ctx.fillStyle = "black";
-
 selectedRoles.forEach(role => {
   const pos = rolePositionMap[role];
   if (pos) {
     // ★ マーカー（固定サイズ）
     ctx.fillStyle = "rgba(255, 105, 180, 0.4)"; // ピンク透過
     ctx.fillRect(pos.x - 5, pos.y - 28, markerWidth, markerHeight);
-
-    // ★ 役職名
-    ctx.fillStyle = "black";
-    ctx.fillText(role, pos.x, pos.y);
-  }
+    
 });
 
   const selectedRoles = Array.from(document.querySelectorAll("input[name='role']:checked")).map(cb => cb.value);
@@ -349,4 +330,5 @@ function downloadImage(){
 </script>
 </body>
 </html>
+
 
