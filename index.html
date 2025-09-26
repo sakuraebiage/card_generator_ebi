@@ -254,27 +254,32 @@ function draw(){
   ctx.font=`bold ${document.getElementById("sizeCast").value}px "${document.getElementById("fontCast").value}"`;
   ctx.fillText(castText,660,390);
 
-  // 役職マーカー（文字幅に合わせて描画）
-  const rolePositionMap={
-    "後見人": { x:755, y:480 },
-    "露店出店者": { x:960, y:480 },
-    "縁者": { x:740, y:520 },
-    "観客": { x:955, y:520 },
-    "見学": { x:1125, y:520 },
-    "主催": { x:745, y:580 },
-    "運営": { x:950, y:580 },
-    "斎人": { x:1125, y:580 },
-  };
-  const selectedRoles = Array.from(document.querySelectorAll("input[name='role']:checked")).map(cb=>cb.value);
-  ctx.font="bold 28px serif"; // 幅測定用
-  selectedRoles.forEach(role=>{
-    const pos = rolePositionMap[role];
-    if(pos){
-      const textWidth = ctx.measureText(role).width;
-      ctx.fillStyle="rgba(255,105,180,0.2)";
-      ctx.fillRect(pos.x-5,pos.y-28,textWidth+10,36);
-    }
-  });
+// 役職マーカー（個別に上下位置調整可能）
+const rolePositionMap = {
+  "後見人":       { x: 755, y: 480, offsetY: -28 },
+  "露店出店者":   { x: 960, y: 480, offsetY: -28 },
+  "縁者":         { x: 740, y: 520, offsetY: -28 },
+  "観客":         { x: 955, y: 520, offsetY: -28 },
+  "見学":         { x: 1125, y: 520, offsetY: -28 },
+  "主催":         { x: 745, y: 580, offsetY: -28 },
+  "運営":         { x: 950, y: 580, offsetY: -28 },
+  "斎人":         { x: 1125, y: 580, offsetY: -28 },
+};
+
+const selectedRoles = Array.from(document.querySelectorAll("input[name='role']:checked")).map(cb => cb.value);
+ctx.font = "bold 28px serif"; // 幅測定用
+
+selectedRoles.forEach(role => {
+  const pos = rolePositionMap[role];
+  if (pos) {
+    const textWidth = ctx.measureText(role).width;
+    const markerHeight = 36; // 高さは統一
+    const markerWidth = textWidth + 10; // 文字幅に合わせる
+    ctx.fillStyle = "rgba(255,105,180,0.6)"; // 濃いめピンク
+    ctx.fillRect(pos.x - 5, pos.y + pos.offsetY, markerWidth, markerHeight);
+  }
+});
+
 
   // ひとこと
   const c1=document.getElementById("comment1").value;
@@ -305,6 +310,7 @@ function downloadImage(){
 </script>
 </body>
 </html>
+
 
 
 
